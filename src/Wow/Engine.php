@@ -1,11 +1,13 @@
 <?php
     namespace Wow;
 
+    use ErrorException;
+    use Exception;
     use Wow\Core\Dispatcher;
     use Wow\Core\Loader;
     use Wow\Net\Request;
-    use Wow\Net\Response;
     use Wow\Net\Router;
+    use Wow\Template\View;
 
     /**
      * The Engine class contains the Core functionality of the framework.
@@ -47,14 +49,13 @@
         public function __construct() {
             // Start Session
             session_start();
-            
+
             $this->vars = array();
 
             $this->loader     = new Loader();
             $this->dispatcher = new Dispatcher();
             $this->router     = new Router();
             $this->request    = new Request();
-
 
 
             $this->init();
@@ -64,9 +65,7 @@
          * Destructor
          */
         public function __destruct() {
-            $this->response->send();
-            $output = ob_get_clean();
-            exit($output);
+
         }
 
         /**
@@ -106,7 +105,8 @@
             // Register framework methods
             $methods = array(
                 'start',
-                'stop'
+                'stop',
+                'error'
             );
             foreach($methods as $name) {
                 $this->dispatcher->set($name, array(
@@ -124,11 +124,10 @@
                     }
                 } else {
                     foreach($value as $item => $val) {
-                        $this->router->map($val[0], $val[1], count($val)>2 ? $val[2] : $this->get('app.router.case_sensitive'));
+                        $this->router->map($val[0], $val[1], count($val) > 2 ? $val[2] : $this->get('app.router.case_sensitive'));
                     }
                 }
             }
-
 
 
             $initialized = TRUE;
@@ -165,20 +164,20 @@
          * @param int $errfile Error file name
          * @param int $errline Error file line number
          *
-         * @throws \ErrorException
+         * @throws ErrorException
          */
         public function handleError($errno, $errstr, $errfile, $errline) {
             if($errno & error_reporting()) {
-                throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
+                throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
             }
         }
 
         /**
          * Custom exception handler. Logs exceptions.
          *
-         * @param \Exception $e Thrown exception
+         * @param Exception $e Thrown exception
          */
-        public function handleException(\Exception $e) {
+        public function handleException(Exception $e) {
             if($this->get('app.log_errors')) {
                 error_log($e->getMessage());
             }
@@ -192,11 +191,11 @@
          * @param string   $name     Method name
          * @param callback $callback Callback function
          *
-         * @throws \Exception If trying to map over a framework method
+         * @throws Exception If trying to map over a framework method
          */
         public function map($name, $callback) {
             if(method_exists($this, $name)) {
-                throw new \Exception('Cannot override an existing framework method.');
+                throw new Exception('Cannot override an existing framework method.');
             }
 
             $this->dispatcher->set($name, $callback);
@@ -210,11 +209,11 @@
          * @param array    $params   Class initialization parameters
          * @param callback $callback Function to call after object instantiation
          *
-         * @throws \Exception If trying to map over a framework method
+         * @throws Exception If trying to map over a framework method
          */
         public function register($name, $class, array $params = array(), $callback = NULL) {
             if(method_exists($this, $name)) {
-                throw new \Exception('Cannot override an existing framework method.');
+                throw new Exception('Cannot override an existing framework method.');
             }
 
             $this->loader->register($name, $class, $params, $callback);
@@ -316,7 +315,7 @@
             $request    = $this->request;
 
             // No output before app starts!
-            if (ob_get_length() > 0) {
+            if(ob_get_length() > 0) {
                 ob_get_clean();
             }
 
@@ -350,9 +349,8 @@
             }
 
             if(!$dispatched) {
-                $this->response = new Response();
-                $this->response->status(404)
-                               ->write('<h1>404 Not Found</h1>' . '<h3>The page you have requested could not be found.</h3>' . str_repeat(' ', 512));
+                $objErrorView   = new View($this->request);
+                $this->response = $objErrorView->getContent('Error/404');
             }
         }
 
@@ -360,27 +358,29 @@
          * Stops the framework and outputs the current response.
          */
         public function _stop() {
-
+            $this->response->send();
+            $output = ob_get_clean();
+            exit($output);
         }
 
 
         /**
          * Sends an HTTP 500 response for any errors.
          *
-         * @param \Exception Thrown exception
+         * @param Exception Thrown exception
          */
-        public function error(\Exception $e) {
+        public function _error(Exception $e) {
             $msg = sprintf('<h1>500 Internal Server Error</h1>' . '<h3>%s (%s)</h3>' . '<pre>%s</pre>', $e->getMessage(), $e->getCode(), $e->getTraceAsString());
-
             try {
-                $response = new Response();
-                $response->status(500)
-                         ->write($msg)
-                         ->send();
-                exit();
-            } catch(\Exception $ex) {
+                $objErrorView = new View($this->request);
+                $response     = $objErrorView->getContent('Error/500', array('error' => $e));
+                $response->send();
+                $output = ob_get_clean();
+                exit($output);
+            } catch(Exception $ex) {
                 exit($msg);
             }
+
         }
 
 

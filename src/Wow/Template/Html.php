@@ -44,7 +44,7 @@
             $this->route->params["controller"] = $controller;
             $this->route->params["action"] = $action;
             $content = $this->dispatcher->executeRoute($this->route, $this->request);
-            if(!$content){
+            if($content === FALSE){
                 return FALSE;
             }
             else{

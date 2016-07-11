@@ -12,7 +12,7 @@
 
             $this->view->set('title', 'Homepage');
             $this->view->set('keywords', 'app, wow app, php');
-            $this->view->set('descripton', 'Wellcome to wow framework.');
+            $this->view->set('description', 'Wellcome to wow framework.');
 
             return $this->view();
 

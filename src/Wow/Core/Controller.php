@@ -41,7 +41,11 @@
          * @return mixed
          */
         function init() {
-            if(!method_exists($this, $this->route->params["action"]) || !is_callable(array($this,$this->route->params["action"]))) {
+            if(!method_exists($this, $this->route->params["action"]) || !is_callable(array(
+                                                                                         $this,
+                                                                                         $this->route->params["action"]
+                                                                                     ))
+            ) {
                 return $this->notFound();
             }
             $routeValues = $this->route->params;
@@ -136,10 +140,11 @@
          */
         public function notFound() {
             $this->response->clear()
-                           ->status(404)
-                           ->write('<h1>404 Not Found</h1>' . '<h3>The page you have requested could not be found.</h3>' . str_repeat(' ', 512));
-
-            return $this->response;
+                           ->status(404);
+//                           ->write('<h1>404 Not Found</h1>' . '<h3>The page you have requested could not be found.</h3>' . str_repeat(' ', 512));
+//
+//            return $this->response;
+            return $this->view->getContent('Error/404');
         }
 
         /**
@@ -178,8 +183,36 @@
             $this->response->clear()
                            ->status($code)
                            ->header('Location', $url)
-                           ->write($url)
-                           ->send();
+                           ->write($url);
+
+            return $this->response;
+        }
+
+
+        /**
+         * Returns a Redirect Response.
+         *
+         * @param string $url
+         * @param int    $code
+         *
+         * @return Response
+         */
+        public function redirectToUrl($url, $code = 302) {
+            $base = Wow::get('app.base_url');
+
+            if($base === NULL) {
+                $base = $this->request->base;
+            }
+
+            // Append base url to redirect url
+            if($base != '/' && strpos($url, '://') === FALSE) {
+                $url = preg_replace('#/+#', '/', $base . '/' . $url);
+            }
+
+            $this->response->clear()
+                           ->status($code)
+                           ->header('Location', $url)
+                           ->write($url);
 
             return $this->response;
         }

@@ -227,7 +227,7 @@
             } elseif(!method_exists($class, $method) || !is_callable($class, $method)) {
                 return FALSE;
             } else {
-                $class  = "\\Wow\\Controllers\\" . $route->params["controller"] . "Controller";
+                $class        = "\\Wow\\Controllers\\" . $route->params["controller"] . "Controller";
                 $objRefClass  = new \ReflectionClass($class);
                 $objRefMethod = $objRefClass->getMethod($method);
                 $refClass     = "\\" . $objRefMethod->class;

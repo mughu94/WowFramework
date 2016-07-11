@@ -5,6 +5,7 @@
     use Wow;
     use Wow\Net\Request;
     use Wow\Net\Response;
+    use Exception;
 
     /**
      * Class View
@@ -212,14 +213,14 @@
         /**
          * Set the active section content
          *
-         * @throws \Exception
+         * @throws Exception
          */
         public function endSection() {
             if(!is_null($this->selectedSection)) {
                 $this->setSection($this->selectedSection, ob_get_clean());
                 $this->selectedSection = NULL;
             } else {
-                throw new \Exception("Can not end section when there is no selected section!");
+                throw new Exception("Can not end section when there is no selected section!");
             }
         }
 
@@ -235,7 +236,7 @@
         /**
          * Prints active section.
          *
-         * @throws \Exception
+         * @throws Exception
          */
         public function show() {
             if(!is_null($this->selectedSection)) {
@@ -244,7 +245,7 @@
                 echo $newContent;
                 $this->selectedSection = NULL;
             } else {
-                throw  new \Exception("Can not show section when there is no selected section!");
+                throw  new Exception("Can not show section when there is no selected section!");
             }
         }
 
@@ -262,7 +263,7 @@
                 $this->response->write($this->body);
             }
             else{
-                $this->response->write($this->fetch($this->layout),$data);
+                $this->response->write($this->fetch($this->layout,$data));
             }
             return $this->response;
         }
@@ -273,11 +274,11 @@
          * @param string $section
          * @param bool   $required
          *
-         * @throws \Exception if Section is Required and Not Exists
+         * @throws Exception if Section is Required and Not Exists
          */
         public function renderSection($section, $required = FALSE) {
             if($required && !$this->hasSection($section)) {
-                throw new \Exception("Template requires section: " . $section);
+                throw new Exception("Template requires section: " . $section);
             }
             if($this->hasSection($section)) {
                 echo $this->getSection($section);
@@ -299,13 +300,13 @@
          * @param string $file Template file
          * @param array  $data Template data
          *
-         * @throws \Exception If Template file not found
+         * @throws Exception If Template file not found
          */
         public function renderTemplate($file, $data = NULL) {
             $this->template = $this->getTemplate($file);
 
             if(!file_exists($this->template)) {
-                throw new \Exception("Template file not found: {$this->template}.");
+                throw new Exception("Template file not found: {$this->template}.");
             }
 
             if(is_array($data)) {

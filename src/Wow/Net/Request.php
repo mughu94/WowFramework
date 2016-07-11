@@ -99,6 +99,10 @@ class Request {
      * @var \Wow\Util\Collection Uploaded files
      */
     public $files;
+    /**
+     * @var \Wow\Util\Collection Session contents
+     */
+    public $session;
 
     /**
      * @var bool Whether the connection is secure

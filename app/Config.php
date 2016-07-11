@@ -16,13 +16,6 @@
 
         //Routes
         "routes"   => array(
-            "mainRoute"    => array(
-                "(/main(/@action(/@id)))",
-                array(
-                    "controller" => "Home",
-                    "action"     => "Index"
-                )
-            ),
             "DefaultRoute" => array(
                 "(/@controller(/@action(/@id)))",
                 array(
