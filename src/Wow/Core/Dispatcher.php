@@ -232,7 +232,7 @@
                 $objRefMethod = $objRefClass->getMethod($method);
                 $refClass     = "\\" . $objRefMethod->class;
                 $refMethod    = $objRefMethod->name;
-                if($refClass === $class && $refMethod === $method) {
+                if(!$route->case_sensitive || $refClass === $class && $refMethod === $method) {
                     $ControllerClass = new $class($route, $request);
 
                     return $ControllerClass->init();
