@@ -5,6 +5,7 @@
     use Wow;
     use Wow\Net\Request;
     use Wow\Net\Response;
+    use Wow\Net\Route;
     use Exception;
 
     /**
@@ -17,6 +18,38 @@
      * @package Wow\Template
      */
     class View {
+
+        /**
+         * Request
+         *
+         * @var Request
+         */
+        protected $request;
+
+
+        /**
+         * Route
+         *
+         * @var Route
+         */
+        protected $route;
+
+        /**
+         * Response
+         *
+         * @var Response
+         */
+        protected $response;
+
+
+        /**
+         * HTML
+         *
+         * @var Html
+         */
+        protected $html;
+
+
         /**
          * View variables.
          *
@@ -52,6 +85,7 @@
          */
         protected $layout = NULL;
 
+
         /**
          * Template file.
          *
@@ -62,11 +96,12 @@
         /**
          * View constructor.
          *
-         * @param Request  $request
+         * @param Request $request
          */
-        public function __construct(Request $request) {
+        public function __construct(Request $request, Route $route) {
             $this->response = new Response();
-            $this->html = new Html($request, $this->response);
+            $this->html     = new Html($request, $this->response);
+            $this->route    = $route;
             $this->setLayout(Wow::get('app.layout'));
         }
 
@@ -172,7 +207,7 @@
          *
          * @param string $layout
          */
-        public function setLayout($layout){
+        public function setLayout($layout) {
             $this->layout = $layout;
         }
 
@@ -181,7 +216,7 @@
          *
          * @return mixed|string
          */
-        public function getLayout(){
+        public function getLayout() {
             return $this->layout;
         }
 
@@ -255,16 +290,16 @@
          *
          * @param string $file
          * @param string $data
-         * @param bool $partial
+         * @param bool   $partial
          */
         public function getContent($file, $data = NULL, $partial = FALSE) {
             $this->body = $this->fetch($file, $data);
-            if($partial===TRUE) {
+            if($partial === TRUE) {
                 $this->response->write($this->body);
+            } else {
+                $this->response->write($this->fetch($this->layout, $data));
             }
-            else{
-                $this->response->write($this->fetch($this->layout,$data));
-            }
+
             return $this->response;
         }
 
