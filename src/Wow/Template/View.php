@@ -98,7 +98,7 @@
          *
          * @param Request $request
          */
-        public function __construct(Request $request, Route $route) {
+        public function __construct(Request $request, Route $route = null) {
             $this->response = new Response();
             $this->html     = new Html($request, $this->response);
             $this->route    = $route;
