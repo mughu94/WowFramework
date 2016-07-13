@@ -16,7 +16,7 @@
             $this->route    = $route;
             $this->request  = $request;
             $this->response = new Response();
-            $this->view     = new View($request);
+            $this->view     = new View($request,$route);
 
             $this->onStart();
 
