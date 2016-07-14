@@ -59,6 +59,7 @@
         public function matchUrl($url) {
             // Wildcard or exact match
             if($this->pattern === '*' || $this->pattern === $url) {
+                $this->params = array_merge($this->defaults, $this->params);
                 return TRUE;
             }
 
