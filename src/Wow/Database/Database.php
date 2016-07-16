@@ -61,7 +61,7 @@
         private function Connect() {
             // Get database settings from Config File
             $this->settings = array(
-                "connection" => Wow::get("database.connection"),
+                "driver" => Wow::get("database.driver"),
                 "host"       => Wow::get("database.host"),
                 "port"       => Wow::get("database.port"),
                 "name"       => Wow::get("database.name"),
@@ -70,7 +70,7 @@
             );
 
             try {
-                switch($this->settings["connection"]) {
+                switch($this->settings["driver"]) {
                     case "mysql":
                         $dsn = "mysql:host=" . $this->settings["host"];
                         if(empty($this->settings["port"])) {
@@ -153,7 +153,7 @@
             try {
                 // Prepare query
                 $queryOptions = array();
-                if($this->settings["connection"] == "sqlsrv") {
+                if($this->settings["driver"] == "sqlsrv") {
                     $queryOptions = array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL);
                 }
                 $this->sQuery = $this->pdo->prepare($query, $queryOptions);
