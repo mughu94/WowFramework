@@ -7,7 +7,7 @@
             "layout"                => "layout/default",
             "base_url"              => NULL,
             "handle_errors"         => TRUE,
-            "log_errors"            => FALSE,
+            "log_errors"            => FALSE, 
             "router_case_sensitive" => TRUE
         ),
 
