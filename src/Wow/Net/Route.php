@@ -32,6 +32,10 @@
          * @var bool Is Route's Url Matching Case Sensitive
          */
         public $case_sensitive;
+        /**
+         * @var string Default view name for route.
+         */
+        public $view;
 
 
         /**
@@ -60,6 +64,7 @@
             // Wildcard or exact match
             if($this->pattern === '*' || $this->pattern === $url) {
                 $this->params = array_merge($this->defaults, $this->params);
+
                 return TRUE;
             }
 

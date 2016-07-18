@@ -220,25 +220,21 @@
              */
 
             //Fix for autoloaders case sensivity.
-            $class  = "\\Wow\\Controllers\\" . ucfirst(strtolower($route->params["controller"])) . "Controller";
-            $method = $route->params["action"];
-            if(!class_exists($class)) {
+            $fixedViewName   = implode("-", array_map("strtolower", explode("-", $route->params["controller"])));
+            $fixedClassName  = implode("", array_map("ucfirst", explode("-", $route->params["controller"])));
+            $psr4ClassName   = "\\Wow\\Controllers\\" . $fixedClassName . "Controller";
+            $fixedMethodName = implode("", array_map("ucfirst", explode("-", $route->params["action"]))) . "Action";
+            if(!class_exists($psr4ClassName)) {
                 return FALSE;
-            } elseif(!method_exists($class, $method) || !is_callable($class, $method)) {
+            } elseif(!method_exists($psr4ClassName, $fixedMethodName) || !is_callable($psr4ClassName, $fixedMethodName)) {
                 return FALSE;
             } else {
-                $class        = "\\Wow\\Controllers\\" . $route->params["controller"] . "Controller";
-                $objRefClass  = new \ReflectionClass($class);
-                $objRefMethod = $objRefClass->getMethod($method);
-                $refClass     = "\\" . $objRefMethod->class;
-                $refMethod    = $objRefMethod->name;
-                if(!$route->case_sensitive || $refClass === $class && $refMethod === $method) {
-                    $ControllerClass = new $class($route, $request);
+                $route->params["controller"] = $fixedClassName;
+                $route->params["action"]     = $fixedMethodName;
+                $route->view                 = $fixedViewName;
+                $ControllerClass             = new $psr4ClassName($route, $request);
 
-                    return $ControllerClass->init();
-                } else {
-                    return FALSE;
-                }
+                return $ControllerClass->init();
             }
         }
 

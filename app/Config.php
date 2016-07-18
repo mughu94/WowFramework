@@ -4,11 +4,11 @@
 
         //App Variables
         "app"      => array(
-            "layout"                => "Layout/Default",
+            "layout"                => "layout/default",
             "base_url"              => NULL,
             "handle_errors"         => TRUE,
             "log_errors"            => FALSE,
-            "router.case_sensitive" => TRUE
+            "router_case_sensitive" => TRUE
         ),
 
 

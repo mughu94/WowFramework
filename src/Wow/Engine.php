@@ -124,7 +124,7 @@
                     }
                 } else {
                     foreach($value as $item => $val) {
-                        $this->router->map($val[0], $val[1], count($val) > 2 ? $val[2] : $this->get('app.router.case_sensitive'));
+                        $this->router->map($val[0], $val[1], count($val) > 2 ? $val[2] : $this->get('app.router_case_sensitive'));
                     }
                 }
             }
@@ -350,7 +350,7 @@
 
             if(!$dispatched) {
                 $objErrorView   = new View($this->request);
-                $this->response = $objErrorView->getContent('Error/404');
+                $this->response = $objErrorView->getContent('error/404');
             }
         }
 
@@ -367,13 +367,13 @@
         /**
          * Sends an HTTP 500 response for any errors.
          *
-         * @param Exception Thrown exception
+         * @param Exception $e
          */
         public function _error(Exception $e) {
             $msg = sprintf('<h1>500 Internal Server Error</h1>' . '<h3>%s (%s)</h3>' . '<pre>%s</pre>', $e->getMessage(), $e->getCode(), $e->getTraceAsString());
             try {
                 $objErrorView = new View($this->request);
-                $response     = $objErrorView->getContent('Error/500', array('error' => $e));
+                $response     = $objErrorView->getContent('error/500', array('error' => $e));
                 $response->send();
                 $output = ob_get_clean();
                 exit($output);

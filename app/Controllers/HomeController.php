@@ -7,7 +7,7 @@
     class HomeController extends BaseController {
 
 
-        public function Index() {
+        public function IndexAction() {
 
 
             $this->view->set('title', 'Homepage');

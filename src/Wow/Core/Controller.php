@@ -16,7 +16,7 @@
             $this->route    = $route;
             $this->request  = $request;
             $this->response = new Response();
-            $this->view     = new View($request,$route);
+            $this->view     = new View($request, $route);
 
             $this->onStart();
 
@@ -67,9 +67,7 @@
          * @return Response
          */
         public function view($data = NULL, $viewname = NULL) {
-            if($viewname == NULL) {
-                $viewname = $this->route->params["controller"] . "/" . $this->route->params["action"];
-            }
+            $viewname = $this->getViewName($viewname);
 
             return $this->view->getContent($viewname, $data);
         }
@@ -83,13 +81,25 @@
          * @return Response
          */
         public function partialView($data = NULL, $viewname = NULL) {
-            if($viewname == NULL) {
-                $viewname = $this->route->params["controller"] . "/" . $this->route->params["action"];
-            }
+            $viewname = $this->getViewName($viewname);
 
             return $this->view->getContent($viewname, $data, TRUE);
         }
 
+        /**
+         * Finds the right view name.
+         *
+         * @param string $viewname
+         *
+         * @return string
+         */
+        private function getViewName($viewname) {
+            if(empty($viewname)) {
+                $viewname = $this->route->view;
+            }
+
+            return strtolower($viewname);
+        }
 
         /**
          * Renders data as json object
@@ -141,10 +151,8 @@
         public function notFound() {
             $this->response->clear()
                            ->status(404);
-//                           ->write('<h1>404 Not Found</h1>' . '<h3>The page you have requested could not be found.</h3>' . str_repeat(' ', 512));
-//
-//            return $this->response;
-            return $this->view->getContent('Error/404');
+
+            return $this->view->getContent('error/404');
         }
 
         /**
