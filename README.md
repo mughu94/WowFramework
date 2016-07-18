@@ -53,9 +53,9 @@ So the url /About extends to
 
 Routes are defined in /app/Config.php file!
 
-###System Config File Samples
+##System Config File Samples
 These samples show you how to make .htaccess file (for linux based platforms) or web.config files (for windows IIS platform) 
-#### Sample .htaccess file for Apache
+### Sample .htaccess file for Apache
 
     RewriteEngine On
     # Redirect Trailing Slashes...
@@ -66,7 +66,7 @@ These samples show you how to make .htaccess file (for linux based platforms) or
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ index.php [QSA,L]
     
-#### Sample Web.config File for IIS
+### Sample Web.config File for IIS
     <rewrite>
       <rules>
         <rule name="FixTrailingSlashes" stopProcessing="true">
