@@ -220,7 +220,7 @@
              */
 
             //Fix for autoloaders case sensivity.
-            $fixedViewName   = implode("-", array_map("strtolower", explode("-", $route->params["controller"])));
+            $fixedViewName   = implode("-", array_map("strtolower", explode("-", $route->params["controller"]))) ."/". implode("-", array_map("strtolower", explode("-", $route->params["action"])));
             $fixedClassName  = implode("", array_map("ucfirst", explode("-", $route->params["controller"])));
             $psr4ClassName   = "\\Wow\\Controllers\\" . $fixedClassName . "Controller";
             $fixedMethodName = implode("", array_map("ucfirst", explode("-", $route->params["action"]))) . "Action";
