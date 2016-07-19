@@ -2,6 +2,7 @@
 
     namespace Wow\Database;
 
+    use Exception;
     use PDO;
     use PDOException;
     use PDOStatement;
@@ -16,7 +17,7 @@
         /**
          * @var $instance Database;
          */
-        protected static $instance;
+        protected static $instances = array();
 
         /**
          * @var $pdo PDO
@@ -47,21 +48,22 @@
         /**
          * @return Database Instance of Database
          */
-        public static function getInstance(){
-            if(self::$instance === NULL) {
-                self::$instance = new Database();
+        public static function getInstance($instanceName = "DefaultConnection") {
+            if(isset(self::$instances[$instanceName])) {
+                self::$instances[$instanceName] = new Database($instanceName);
             }
 
-            return self::$instance;
+            return self::$instances[$instanceName];
         }
+
         /**
          *   Default Constructor
          *
          *    1. Connect to database.
          *    2. Creates the parameter array.
          */
-        public function __construct() {
-            $this->Connect();
+        public function __construct($connectionName = "DefaultConnection") {
+            $this->Connect($connectionName);
             $this->parameters = array();
         }
 
@@ -73,16 +75,13 @@
          *    3. Tries to connect to the database.
          *    4. If connection failed, exception is displayed and a log file gets created.
          */
-        private function Connect() {
-            // Get database settings from Config File
-            $this->settings = array(
-                "driver"   => Wow::get("database.driver"),
-                "host"     => Wow::get("database.host"),
-                "port"     => Wow::get("database.port"),
-                "name"     => Wow::get("database.name"),
-                "user"     => Wow::get("database.user"),
-                "password" => Wow::get("database.password")
-            );
+        private function Connect($connectionName = "DefaultConnection") {
+            // Get database properties from Config File
+            if(Wow::has("database." . $connectionName)) {
+                $this->settings = Wow::get("database." . $connectionName);
+            } else {
+                throw new Exception("Database properties (named: " . $connectionName . ") could not found in Config file!");
+            }
 
             try {
                 switch($this->settings["driver"]) {
