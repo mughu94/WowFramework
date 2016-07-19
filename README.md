@@ -51,7 +51,7 @@ So the url /About extends to
 * Action: IndexAction()
 * View Name: about/index
 
-Routes are defined in /app/Config.php file!
+Routes are defined in /app/Config/Routes.php file!
 
 ##System Config File Samples
 These samples show you how to make .htaccess file (for linux based platforms) or web.config files (for windows IIS platform) 
