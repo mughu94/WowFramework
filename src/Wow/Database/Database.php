@@ -49,7 +49,7 @@
          * @return Database Instance of Database
          */
         public static function getInstance($instanceName = "DefaultConnection") {
-            if(isset(self::$instances[$instanceName])) {
+            if(!isset(self::$instances[$instanceName])) {
                 self::$instances[$instanceName] = new Database($instanceName);
             }
 
