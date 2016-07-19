@@ -14,6 +14,11 @@
      */
     class Database {
         /**
+         * @var $instance Database;
+         */
+        protected static $instance;
+
+        /**
          * @var $pdo PDO
          */
         private $pdo;
@@ -33,12 +38,22 @@
          */
         private $bConnected = FALSE;
 
-
         /**
          * @var array $parameters
          */
         private $parameters;
 
+
+        /**
+         * @return Database Instance of Database
+         */
+        public static function getInstance(){
+            if(self::$instance === NULL) {
+                self::$instance = new Database();
+            }
+
+            return self::$instance;
+        }
         /**
          *   Default Constructor
          *
@@ -61,12 +76,12 @@
         private function Connect() {
             // Get database settings from Config File
             $this->settings = array(
-                "driver" => Wow::get("database.driver"),
-                "host"       => Wow::get("database.host"),
-                "port"       => Wow::get("database.port"),
-                "name"       => Wow::get("database.name"),
-                "user"       => Wow::get("database.user"),
-                "password"   => Wow::get("database.password")
+                "driver"   => Wow::get("database.driver"),
+                "host"     => Wow::get("database.host"),
+                "port"     => Wow::get("database.port"),
+                "name"     => Wow::get("database.name"),
+                "user"     => Wow::get("database.user"),
+                "password" => Wow::get("database.password")
             );
 
             try {
