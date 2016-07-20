@@ -11,22 +11,24 @@
     class Controller {
 
         public $route;
+        public $request;
+        public $response;
+        public $view;
 
         function __construct(Route $route, Request $request) {
             $this->route    = $route;
             $this->request  = $request;
             $this->response = new Response();
             $this->view     = new View($request, $route);
-
-            $this->onStart();
-
-            //return $this->init();
         }
 
         function __destruct() {
             $this->onEnd();
         }
 
+        /**
+         * @return Response Your Decision
+         */
         public function onStart() {
 
         }
@@ -174,10 +176,10 @@
 
             $url = "/";
             if($controller != "Home" || $action != "Index" || count($routeParams) > 0) {
-                $url .= $controller;
+                $url .= implode("-",array_map("strtolower",preg_split('/(?=[A-Z])/',$controller,-1,PREG_SPLIT_NO_EMPTY)));
             }
             if($action != "Index" || count($routeParams) > 0) {
-                $url .= "/" . $action;
+                $url .= "/" . implode("-",array_map("strtolower",preg_split('/(?=[A-Z])/',$action,-1,PREG_SPLIT_NO_EMPTY)));
             }
             if(count($routeParams) > 0) {
                 $url .= "/" . implode("/", array_values($routeParams));

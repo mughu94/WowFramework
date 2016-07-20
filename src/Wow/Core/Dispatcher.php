@@ -3,6 +3,7 @@
     namespace Wow\Core;
 
     use Wow\Net\Request;
+    use Wow\Net\Response;
     use Wow\Net\Route;
 
     /**
@@ -220,7 +221,7 @@
              */
 
             //Fix for autoloaders case sensivity.
-            $fixedViewName   = implode("-", array_map("strtolower", explode("-", $route->params["controller"]))) ."/". implode("-", array_map("strtolower", explode("-", $route->params["action"])));
+            $fixedViewName   = implode("-", array_map("strtolower", explode("-", $route->params["controller"]))) . "/" . implode("-", array_map("strtolower", explode("-", $route->params["action"])));
             $fixedClassName  = implode("", array_map("ucfirst", explode("-", $route->params["controller"])));
             $psr4ClassName   = "\\Wow\\Controllers\\" . $fixedClassName . "Controller";
             $fixedMethodName = implode("", array_map("ucfirst", explode("-", $route->params["action"]))) . "Action";
@@ -233,6 +234,10 @@
                 $route->params["action"]     = $fixedMethodName;
                 $route->view                 = $fixedViewName;
                 $ControllerClass             = new $psr4ClassName($route, $request);
+                $actionExecuting             = $ControllerClass->onStart();
+                if($actionExecuting instanceof Response) {
+                    return $actionExecuting;
+                }
 
                 return $ControllerClass->init();
             }
