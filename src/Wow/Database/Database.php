@@ -90,7 +90,7 @@
                         if(empty($this->settings["port"])) {
                             $dsn .= "; port=" . $this->settings["port"];
                         }
-                        $dsn .= "; dbname=" . $this->settings["name"];
+                        $dsn .= "; dbname=" . $this->settings["name"] ."; charset=utf8";
                         break;
                     case "sqlsrv":
                         $dsn = "sqlsrv:server=" . $this->settings["host"];
@@ -114,9 +114,7 @@
                         $dsn .= "; dbname=" . $this->settings["name"];
                         break;
                 }
-                $this->pdo = new PDO($dsn, $this->settings["user"], $this->settings["password"], array(
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
-                ));
+                $this->pdo = new PDO($dsn, $this->settings["user"], $this->settings["password"]);
 
                 /**
                  * We can now track any exceptions on Fatal error.

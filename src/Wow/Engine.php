@@ -116,19 +116,18 @@
             }
 
             // Default configuration settings from config file
-            $myConfigArray = include "./app/Config/Config.php";
+            $myConfigArray = include __DIR__ . "/../../app/Config/Config.php";
             foreach($myConfigArray as $key => $value) {
                 foreach($value as $item => $val) {
                     $this->set($key . "." . $item, $val);
                 }
 
             }
+
             // Route configuration from routes file
-            $myRoutesArray = include "./app/Config/Routes.php";
-            foreach($myRoutesArray as $key => $value) {
-                foreach($value as $item => $val) {
-                    $this->router->map($val[0], $val[1], count($val) > 2 ? $val[2] : $this->get('app.router_case_sensitive'));
-                }
+            $myRoutesArray = include __DIR__ . "/../../app/Config/Routes.php";
+            foreach($myRoutesArray as $item => $val) {
+                $this->router->map($val[0], $val[1], count($val) > 2 ? $val[2] : $this->get('app.router_case_sensitive'));
             }
 
 
