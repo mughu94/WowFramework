@@ -87,28 +87,28 @@
                 switch($this->settings["driver"]) {
                     case "mysql":
                         $dsn = "mysql:host=" . $this->settings["host"];
-                        if(empty($this->settings["port"])) {
+                        if(!empty($this->settings["port"])) {
                             $dsn .= "; port=" . $this->settings["port"];
                         }
                         $dsn .= "; dbname=" . $this->settings["name"] ."; charset=utf8";
                         break;
                     case "sqlsrv":
                         $dsn = "sqlsrv:server=" . $this->settings["host"];
-                        if(empty($this->settings["port"])) {
+                        if(!empty($this->settings["port"])) {
                             $dsn .= "; port=" . $this->settings["port"];
                         }
                         $dsn .= "; Database=" . $this->settings["name"];
                         break;
                     case "pgsql":
                         $dsn = "pgsql:host=" . $this->settings["host"];
-                        if(empty($this->settings["port"])) {
+                        if(!empty($this->settings["port"])) {
                             $dsn .= "; port=" . $this->settings["port"];
                         }
                         $dsn .= "; dbname=" . $this->settings["name"];
                         break;
                     default:
                         $dsn = $this->settings["connection"] . ":host=" . $this->settings["host"];
-                        if(empty($this->settings["port"])) {
+                        if(!empty($this->settings["port"])) {
                             $dsn .= "; port=" . $this->settings["port"];
                         }
                         $dsn .= "; dbname=" . $this->settings["name"];
@@ -122,15 +122,21 @@
                 $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
                 /**
-                 * Disable emulation of prepared statements, use REAL prepared statements instead.
+                 * Disable emulation of prepared statements, use REAL prepared statements instead. Works for mysql. Does not work in sqlsrv. Not tested others.
+                 * TODO test other db drivers.
                  */
-                $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+                switch($this->settings["driver"]) {
+                    case "mysql":
+                        $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+                        break;
+                }
 
                 /**
                  * Connection succeeded, set the boolean to true.
                  */
                 $this->bConnected = TRUE;
             } catch(PDOException $e) {
+                print_r($e);
                 die("Error in Database Connection. Could not connect to Database!");
             }
         }
