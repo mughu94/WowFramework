@@ -354,6 +354,20 @@
         }
 
         /**
+         * Renders a Partial View.
+         *
+         * @param string $controller Controller Name
+         * @param string $action Controller Method
+         * @param array  $data Template data
+         *
+         * @throws Exception If Template file not found
+         */
+        public function renderPartial($controller, $action = "Index", $data = NULL) {
+            $file   = implode("-", array_map("strtolower", explode("-", $controller))) . "/" . implode("-", array_map("strtolower", explode("-", $action)));
+            $this->renderTemplate($file, $data);
+        }
+
+        /**
          * Gets the output of a Template.
          *
          * @param string $file Template file
@@ -367,6 +381,19 @@
             $output = ob_get_clean();
 
             return $output;
+        }
+        /**
+         * Fetchs a Partial View.
+         *
+         * @param string $controller Controller Name
+         * @param string $action Controller Method
+         * @param array  $data Template data
+         *
+         * @throws Exception If Template file not found
+         */
+        public function fetchPartial($controller, $action = "Index", $data = NULL) {
+            $file   = implode("-", array_map("strtolower", explode("-", $controller))) . "/" . implode("-", array_map("strtolower", explode("-", $action)));
+            return $this->fetch($file, $data);
         }
 
         /**
