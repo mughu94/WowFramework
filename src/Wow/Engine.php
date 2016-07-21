@@ -373,6 +373,8 @@
         public function _error(Exception $e) {
             $msg = sprintf('<h1>500 Internal Server Error</h1>' . '<h3>%s (%s)</h3>' . '<pre>%s</pre>', $e->getMessage(), $e->getCode(), $e->getTraceAsString());
             try {
+                ob_end_clean();
+                ob_start();
                 $objErrorView = new View($this->request);
                 $response     = $objErrorView->getContent('error/500', array('error' => $e));
                 $response->send();
