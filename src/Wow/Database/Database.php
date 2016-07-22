@@ -90,7 +90,7 @@
                         if(!empty($this->settings["port"])) {
                             $dsn .= "; port=" . $this->settings["port"];
                         }
-                        $dsn .= "; dbname=" . $this->settings["name"] ."; charset=utf8";
+                        $dsn .= "; dbname=" . $this->settings["name"] . "; charset=utf8";
                         break;
                     case "sqlsrv":
                         $dsn = "sqlsrv:server=" . $this->settings["host"];
@@ -226,10 +226,10 @@
          * @param string $value
          */
         public function bind($para, $value) {
-            $this->parameters[sizeof($this->parameters)] = [
+            $this->parameters[sizeof($this->parameters)] = array(
                 ":" . $para,
                 $value
-            ];
+            );
         }
 
         /**
