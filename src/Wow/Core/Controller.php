@@ -43,10 +43,10 @@
          * @return mixed
          */
         function init() {
-            if(!method_exists($this, $this->route->params["action"]) || !is_callable(array(
-                                                                                         $this,
-                                                                                         $this->route->params["action"]
-                                                                                     ))
+            if(!method_exists($this, $this->route->params["action"]."Action") || !is_callable(array(
+                                                                                                  $this,
+                                                                                                  $this->route->params["action"]."Action"
+                                                                                              ))
             ) {
                 return $this->notFound();
             }
@@ -56,7 +56,7 @@
 
             return call_user_func_array(array(
                                             $this,
-                                            $this->route->params["action"]
+                                            $this->route->params["action"]."Action"
                                         ), $routeValues);
         }
 
