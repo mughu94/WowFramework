@@ -14,6 +14,7 @@
         public $request;
         public $response;
         public $view;
+        private $viewname = NULL;
 
         function __construct(Route $route, Request $request) {
             $this->route    = $route;
@@ -42,22 +43,19 @@
          *
          * @return mixed
          */
-        function init() {
-            if(!method_exists($this, $this->route->params["action"]."Action") || !is_callable(array(
-                                                                                                  $this,
-                                                                                                  $this->route->params["action"]."Action"
-                                                                                              ))
+        function init($action, $viewname, $params = array()) {
+            if(!method_exists($this, $action) || !is_callable(array(
+                                                                  $this,
+                                                                  $action
+                                                              ))
             ) {
                 return $this->notFound();
             }
-            $routeValues = $this->route->params;
-            unset($routeValues["controller"]);
-            unset($routeValues["action"]);
-
+            $this->viewname = $viewname;
             return call_user_func_array(array(
                                             $this,
-                                            $this->route->params["action"]."Action"
-                                        ), $routeValues);
+                                            $action
+                                        ), $params);
         }
 
         /**
@@ -97,7 +95,7 @@
          */
         private function getViewName($viewname) {
             if(empty($viewname)) {
-                $viewname = $this->route->view;
+                $viewname = $this->viewname;
             }
 
             return strtolower($viewname);
@@ -176,10 +174,10 @@
 
             $url = "/";
             if($controller != "Home" || $action != "Index" || count($routeParams) > 0) {
-                $url .= implode("-",array_map("strtolower",preg_split('/(?=[A-Z])/',$controller,-1,PREG_SPLIT_NO_EMPTY)));
+                $url .= implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $controller, -1, PREG_SPLIT_NO_EMPTY)));
             }
             if($action != "Index" || count($routeParams) > 0) {
-                $url .= "/" . implode("-",array_map("strtolower",preg_split('/(?=[A-Z])/',$action,-1,PREG_SPLIT_NO_EMPTY)));
+                $url .= "/" . implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $action, -1, PREG_SPLIT_NO_EMPTY)));
             }
             if(count($routeParams) > 0) {
                 $url .= "/" . implode("/", array_values($routeParams));

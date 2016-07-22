@@ -2,6 +2,7 @@
 
     namespace Wow\Core;
 
+    use ReflectionMethod;
     use Wow\Net\Request;
     use Wow\Net\Response;
     use Wow\Net\Route;
@@ -227,20 +228,39 @@
             $fixedMethodName = implode("", array_map("ucfirst", explode("-", $route->params["action"])));
             if(!class_exists($psr4ClassName)) {
                 return FALSE;
-            } elseif(!method_exists($psr4ClassName, $fixedMethodName."Action") || !is_callable($psr4ClassName, $fixedMethodName."Action")) {
+            } elseif(!method_exists($psr4ClassName, $fixedMethodName . "Action") || !is_callable($psr4ClassName, $fixedMethodName . "Action")) {
                 return FALSE;
-            } else {
-                $route->params["controller"] = $fixedClassName;
-                $route->params["action"]     = $fixedMethodName;
-                $route->view                 = $fixedViewName;
-                $ControllerClass             = new $psr4ClassName($route, $request);
-                $actionExecuting             = $ControllerClass->onStart();
-                if($actionExecuting instanceof Response) {
-                    return $actionExecuting;
-                }
-
-                return $ControllerClass->init();
             }
+
+            $methodValues = $route->params;
+            unset($methodValues["controller"]);
+            unset($methodValues["action"]);
+
+            $objRefMethod = new ReflectionMethod($psr4ClassName, $fixedMethodName . "Action");
+            $methodParams = $objRefMethod->getParameters();
+            foreach($methodParams as $param) {
+                if(!in_array($param->getName(), $methodValues)) {
+                    if(isset($request->query[$param->getName()])) {
+                        $methodValues[$param->getName()] = $request->query[$param->getName()];
+                    } else {
+                        if(!$param->isOptional()) {
+                            return FALSE;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $route->params["controller"] = $fixedClassName;
+            $route->params["action"]     = $fixedMethodName;
+            $ControllerClass                 = new $psr4ClassName($route, $request);
+            $actionExecuting                 = $ControllerClass->onStart();
+            if($actionExecuting instanceof Response) {
+                return $actionExecuting;
+            }
+
+            return $ControllerClass->init($fixedMethodName . "Action", $fixedViewName, $methodValues);
+
         }
 
         /**

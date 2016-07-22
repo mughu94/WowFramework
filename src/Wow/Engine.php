@@ -351,7 +351,7 @@
 
             if(!$dispatched) {
                 $objErrorView   = new View($this->request);
-                $this->response = $objErrorView->getContent('error/404');
+                $this->response = $objErrorView->getContent('error/404', NULL, TRUE);
             }
         }
 
@@ -376,7 +376,7 @@
                 ob_end_clean();
                 ob_start();
                 $objErrorView = new View($this->request);
-                $response     = $objErrorView->getContent('error/500', array('error' => $e));
+                $response     = $objErrorView->getContent('error/500', array('error' => $e), TRUE);
                 $response->send();
                 $output = ob_get_clean();
                 exit($output);
