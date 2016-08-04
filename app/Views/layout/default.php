@@ -2,9 +2,7 @@
     /**
      * Wow Master Template
      *
-     * @var string $title
-     * @var string $description
-     * @var string $keywords
+     * @var \Wow\Template\View $this
      */
 ?>
 <!DOCTYPE html>
@@ -17,12 +15,12 @@
     <link rel="stylesheet" href="/assets/bootstrap/3.3.6/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/assets/Style/Style.css">
     <title><?php if($this->has('title')) {
-            echo $title . " | ";
+            echo $this->get("title") . " | ";
         } ?>Wow</title>
     <?php if($this->has('description')) { ?>
-    <meta name="description" content="<?php echo $description; ?>"><?php } ?>
+    <meta name="description" content="<?php echo $this->get("description"); ?>"><?php } ?>
     <?php if($this->has('keywords')) { ?>
-    <meta name="keywords" content="<?php echo $keywords; ?>"><?php } ?>
+    <meta name="keywords" content="<?php echo $this->get("keywords"); ?>"><?php } ?>
 </head>
 <body>
 <nav class="navbar navbar-default">

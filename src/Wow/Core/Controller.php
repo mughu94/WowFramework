@@ -10,10 +10,10 @@
 
     class Controller {
 
-        public $route;
-        public $request;
-        public $response;
-        public $view;
+        public  $route;
+        public  $request;
+        public  $response;
+        public  $view;
         private $viewname = NULL;
 
         function __construct(Route $route, Request $request) {
@@ -52,6 +52,7 @@
                 return $this->notFound();
             }
             $this->viewname = $viewname;
+
             return call_user_func_array(array(
                                             $this,
                                             $action
@@ -61,35 +62,35 @@
         /**
          * Renders View
          *
-         * @param string $data
-         * @param string $viewname
+         * @param string $model Model
+         * @param string $viewname Viewname
          *
          * @return Response
          */
-        public function view($data = NULL, $viewname = NULL) {
+        public function view($model = NULL, $viewname = NULL) {
             $viewname = $this->getViewName($viewname);
 
-            return $this->view->getContent($viewname, $data);
+            return $this->view->getContent($viewname, $model);
         }
 
         /**
          * Renders Partial View
          *
-         * @param mixed  $data
-         * @param string $viewname
+         * @param mixed  $model Model
+         * @param string $viewname Viewname
          *
          * @return Response
          */
-        public function partialView($data = NULL, $viewname = NULL) {
+        public function partialView($model = NULL, $viewname = NULL) {
             $viewname = $this->getViewName($viewname);
 
-            return $this->view->getContent($viewname, $data, TRUE);
+            return $this->view->getContent($viewname, $model, TRUE);
         }
 
         /**
          * Finds the right view name.
          *
-         * @param string $viewname
+         * @param string $viewname Viewname
          *
          * @return string
          */
@@ -104,13 +105,13 @@
         /**
          * Renders data as json object
          *
-         * @param array $data
-         * @param bool  $encode
+         * @param array $model Model
+         * @param bool  $encode Encode
          *
          * @return Response
          */
-        public function json($data, $encode = TRUE) {
-            $json = ($encode) ? json_encode($data) : $data;
+        public function json($model, $encode = TRUE) {
+            $json = ($encode) ? json_encode($model) : $model;
 
             $this->response->clear()
                            ->status(200)
@@ -123,14 +124,14 @@
         /**
          * Renders data as jsonp
          *
-         * @param array  $data
-         * @param string $param
-         * @param bool   $encode
+         * @param array  $model Model
+         * @param string $param QueryString Parameter
+         * @param bool   $encode Encode
          *
          * @return Response
          */
-        public function jsonp($data, $param = 'jsonp', $encode = TRUE) {
-            $json = ($encode) ? json_encode($data) : $data;
+        public function jsonp($model, $param = 'jsonp', $encode = TRUE) {
+            $json = ($encode) ? json_encode($model) : $model;
 
             $callback = $this->request->query[$param];
 
@@ -151,8 +152,7 @@
         public function notFound() {
             $this->response->clear()
                            ->status(404);
-
-            return $this->view->getContent('error/404');
+            return $this->view->getContent('error/404',NULL,TRUE);
         }
 
         /**
@@ -165,11 +165,15 @@
          *
          * @return Response
          */
-        public function redirectToAction($controller = "Home", $action = "Index", $routeParams = array(), $code = 302) {
+        public function redirectToAction($controller = NULL, $action = "Index", $routeParams = array(), $code = 302) {
             $base = Wow::get('app.base_url');
 
             if($base === NULL) {
                 $base = $this->request->base;
+            }
+
+            if($controller === NULL){
+                $controller = $this->route->params["controller"];
             }
 
             $url = "/";

@@ -223,23 +223,28 @@
 
             //Fix for autoloaders case sensivity.
             $fixedViewName   = implode("-", array_map("strtolower", explode("-", $route->params["controller"]))) . "/" . implode("-", array_map("strtolower", explode("-", $route->params["action"])));
-            $fixedClassName  = implode("", array_map("ucfirst", explode("-", $route->params["controller"])));
-            $psr4ClassName   = "\\Wow\\Controllers\\" . $fixedClassName . "Controller";
-            $fixedMethodName = implode("", array_map("ucfirst", explode("-", $route->params["action"])));
+            $fixedClassName  = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $route->params["controller"]))));
+            $psr4ClassName   = "Wow\\Controllers\\" . $fixedClassName . "Controller";
+            $fixedMethodName = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $route->params["action"]))));
             if(!class_exists($psr4ClassName)) {
                 return FALSE;
             } elseif(!method_exists($psr4ClassName, $fixedMethodName . "Action") || !is_callable($psr4ClassName, $fixedMethodName . "Action")) {
                 return FALSE;
             }
 
+            $objRefMethod = new ReflectionMethod($psr4ClassName, $fixedMethodName . "Action");
+            if($psr4ClassName !== $objRefMethod->class || $objRefMethod->name !== $fixedMethodName . "Action") {
+                return FALSE;
+            }
+
             $methodValues = $route->params;
+            $methodParams = $objRefMethod->getParameters();
+
             unset($methodValues["controller"]);
             unset($methodValues["action"]);
 
-            $objRefMethod = new ReflectionMethod($psr4ClassName, $fixedMethodName . "Action");
-            $methodParams = $objRefMethod->getParameters();
             foreach($methodParams as $param) {
-                if(!in_array($param->getName(), $methodValues)) {
+                if(!in_array($param->getName(), array_keys($methodValues))) {
                     if(isset($request->query[$param->getName()])) {
                         $methodValues[$param->getName()] = $request->query[$param->getName()];
                     } else {
@@ -251,10 +256,11 @@
                 }
             }
 
+
             $route->params["controller"] = $fixedClassName;
             $route->params["action"]     = $fixedMethodName;
-            $ControllerClass                 = new $psr4ClassName($route, $request);
-            $actionExecuting                 = $ControllerClass->onStart();
+            $ControllerClass             = new $psr4ClassName($route, $request);
+            $actionExecuting             = $ControllerClass->onStart();
             if($actionExecuting instanceof Response) {
                 return $actionExecuting;
             }

@@ -352,6 +352,7 @@
             if(!$dispatched) {
                 $objErrorView   = new View($this->request);
                 $this->response = $objErrorView->getContent('error/404', NULL, TRUE);
+                $this->response->status(404);
             }
         }
 

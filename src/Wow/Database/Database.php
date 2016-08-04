@@ -136,8 +136,7 @@
                  */
                 $this->bConnected = TRUE;
             } catch(PDOException $e) {
-                print_r($e);
-                die("Error in Database Connection. Could not connect to Database!");
+                throw new Exception("Error in Database Connection. Could not connect to Database! Please check your connection parameters.");
             }
         }
 
@@ -179,6 +178,7 @@
                 // Add parameters to the parameter array
                 $this->bindMore($parameters);
 
+
                 // Bind parameters
                 if(!empty($this->parameters)) {
                     foreach($this->parameters as $param => $value) {
@@ -206,9 +206,9 @@
                 $this->sQuery->execute();
             } catch(PDOException $e) {
                 /**
-                 * Display Exception
+                 * Throw Exception
                  */
-                die("Error in Sql Query. Query executation failed! Please check your sql query.");
+                throw new Exception("An error ocurred in your Sql Query. Please check your sql query.");
             }
 
             /**
@@ -240,7 +240,7 @@
          * @param array $parray
          */
         public function bindMore($parray) {
-            if(empty($this->parameters) && is_array($parray)) {
+            if(is_array($parray)) {
                 $columns = array_keys($parray);
                 foreach($columns as $i => &$column) {
                     $this->bind($column, $parray[$column]);

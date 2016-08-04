@@ -2,11 +2,11 @@
 
     namespace Wow\Template;
 
+    use Exception;
     use Wow;
     use Wow\Net\Request;
     use Wow\Net\Response;
     use Wow\Net\Route;
-    use Exception;
 
     /**
      * Class View
@@ -98,7 +98,8 @@
          *
          * @param Request $request
          */
-        public function __construct(Request $request, Route $route = null) {
+        public function __construct(Request $request, Route $route = NULL) {
+            $this->request  = $request;
             $this->response = new Response();
             $this->html     = new Html($request, $this->response);
             $this->route    = $route;
@@ -220,20 +221,6 @@
             return $this->layout;
         }
 
-        /**
-         * Renders a Template.
-         *
-         * @param string $file Template file
-         * @param array  $data Template data
-         * @param string $key  section
-         */
-        public function render($file, $data = NULL, $key = NULL) {
-            if($key !== NULL) {
-                $this->setSection($key, $this->fetch($file, $data));
-            } else {
-                $this->renderTemplate($file, $data);
-            }
-        }
 
         /**
          * Set the active section to manipulate the content.
@@ -276,7 +263,7 @@
         public function show() {
             if(!is_null($this->selectedSection)) {
                 $parentContent = ob_get_clean();
-                $newContent    = strpos($this->getSection($this->selectedSection), "<!--@parentViewContentFor" . $this->selectedSection . "-->") === FALSE ? $parentContent : str_replace("<!--@parentViewContentFor" . $this->selectedSection . "-->", $parentContent, $this->getSection($this->selectedSection));
+                $newContent    = strpos($this->getSection($this->selectedSection), "<!--@parentViewContentFor" . $this->selectedSection . "-->") === FALSE ? ($this->hasSection($this->selectedSection) ? $this->getSection($this->selectedSection) : $parentContent) : str_replace("<!--@parentViewContentFor" . $this->selectedSection . "-->", $parentContent, $this->getSection($this->selectedSection));
                 echo $newContent;
                 $this->selectedSection = NULL;
             } else {
@@ -286,18 +273,20 @@
 
 
         /**
-         * Inits Template Body
+         * Executes View and returns Response
          *
-         * @param string $file
-         * @param string $data
-         * @param bool   $partial
+         * @param string $viewname Viewname
+         * @param mixed  $model    Model
+         * @param bool   $partial  Is Partial
+         *
+         * @return Response
          */
-        public function getContent($file, $data = NULL, $partial = FALSE) {
-            $this->body = $this->fetch($file, $data);
-            if($partial === TRUE) {
+        public function getContent($viewname, $model = NULL, $partial = FALSE) {
+            $this->body = $this->fetchView($viewname, $model);
+            if($partial === TRUE || empty($this->layout)) {
                 $this->response->write($this->body);
             } else {
-                $this->response->write($this->fetch($this->layout, $data));
+                $this->response->write($this->fetchView($this->layout, $model));
             }
 
             return $this->response;
@@ -330,98 +319,75 @@
         }
 
         /**
+         * @param string $viewname Viewname
+         * @param mixed  $model    Model
+         */
+        public function renderView($viewname, $model = NULL) {
+            $content = $this->fetchView($viewname, $model);
+            echo $content;
+        }
+
+
+        /**
+         * Gets the output of a executed View.
+         *
+         * @param string $viewname Viewname
+         * @param array  $model    Model
+         *
+         * @return string Output of Template
+         */
+        private function fetchView($viewname, $model = NULL) {
+            ob_start();
+            $this->executeView($viewname, $model);
+            $output = ob_get_clean();
+
+            return $output;
+        }
+
+        /**
          * Renders a Template.
          *
-         * @param string $file Template file
-         * @param array  $data Template data
+         * @param string $viewname Viewname
+         * @param mixed  $model    Model
          *
          * @throws Exception If Template file not found
          */
-        public function renderTemplate($file, $data = NULL) {
-            $this->template = $this->getTemplate($file);
+        private function executeView($viewname, $model = NULL) {
+            $this->template = $this->getViewPath($viewname);
 
             if(!file_exists($this->template)) {
                 throw new Exception("Template file not found: {$this->template}.");
             }
 
-            if(is_array($data)) {
-                $this->vars = array_merge($this->vars, $data);
-            }
-
-            extract($this->vars);
-
             include $this->template;
         }
 
         /**
-         * Renders a Partial View.
+         * Checks if a View file exists.
          *
-         * @param string $controller Controller Name
-         * @param string $action Controller Method
-         * @param array  $data Template data
+         * @param string $viewname Viewname
          *
-         * @throws Exception If Template file not found
+         * @return bool View file exists
          */
-        public function renderPartial($controller, $action = "Index", $data = NULL) {
-            $file   = implode("-", array_map("strtolower", explode("-", $controller))) . "/" . implode("-", array_map("strtolower", explode("-", $action)));
-            $this->renderTemplate($file, $data);
-        }
-
-        /**
-         * Gets the output of a Template.
-         *
-         * @param string $file Template file
-         * @param array  $data Template data
-         *
-         * @return string Output of Template
-         */
-        public function fetch($file, $data = NULL) {
-            ob_start();
-            $this->renderTemplate($file, $data);
-            $output = ob_get_clean();
-
-            return $output;
-        }
-        /**
-         * Fetchs a Partial View.
-         *
-         * @param string $controller Controller Name
-         * @param string $action Controller Method
-         * @param array  $data Template data
-         *
-         * @throws Exception If Template file not found
-         */
-        public function fetchPartial($controller, $action = "Index", $data = NULL) {
-            $file   = implode("-", array_map("strtolower", explode("-", $controller))) . "/" . implode("-", array_map("strtolower", explode("-", $action)));
-            return $this->fetch($file, $data);
-        }
-
-        /**
-         * Checks if a Template file exists.
-         *
-         * @param string $file Template file
-         *
-         * @return bool Template file exists
-         */
-        public function exists($file) {
-            return file_exists($this->getTemplate($file));
+        public function hasView($viewname) {
+            return file_exists($this->getViewPath($viewname));
         }
 
         /**
          * Gets the full path to a Template file.
          *
-         * @param string $file Template file
+         * @param string $viewname Template file
          *
          * @return string Template file location
          */
-        public function getTemplate($file) {
-            if((substr($file, -4) != '.php')) {
-                $file .= '.php';
+        private function getViewPath($viewname) {
+            if((substr($viewname, -4) != '.php')) {
+                $viewname .= '.php';
             }
-            if((substr($file, 0, 1) == '/')) {
-                return $file;
+            if((substr($viewname, 0, 1) == '/')) {
+                return $viewname;
             } else {
-                return './app/Views/' . $file;
+                return './app/Views/' . $viewname;
             }
         }
 
