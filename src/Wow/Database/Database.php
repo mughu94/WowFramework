@@ -182,18 +182,15 @@
                 // Bind parameters
                 if(!empty($this->parameters)) {
                     foreach($this->parameters as $param => $value) {
-
                         $type = PDO::PARAM_STR;
-                        switch($value[1]) {
-                            case is_int($value[1]):
-                                $type = PDO::PARAM_INT;
-                                break;
-                            case is_bool($value[1]):
-                                $type = PDO::PARAM_BOOL;
-                                break;
-                            case is_null($value[1]):
-                                $type = PDO::PARAM_NULL;
-                                break;
+                        if(is_int($value[1])) {
+                            $type = PDO::PARAM_INT;
+                        }
+                        if(is_bool($value[1])) {
+                            $type = PDO::PARAM_BOOL;
+                        }
+                        if(is_null($value[1])) {
+                            $type = PDO::PARAM_NULL;
                         }
                         // Add type when binding the values to the column
                         $this->sQuery->bindValue($value[0], $value[1], $type);
