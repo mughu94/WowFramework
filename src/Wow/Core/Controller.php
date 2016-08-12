@@ -10,11 +10,20 @@
 
     class Controller {
 
+        const PARAM_RESULT_TYPE_VIEW         = "ViewResult";
+        const PARAM_RESULT_TYPE_PARTIALVIEW  = "PartialViewResult";
+        const PARAM_RESULT_TYPE_JSON         = "JsonResult";
+        const PARAM_RESULT_TYPE_JSONP        = "JsonPResult";
+        const PARAM_RESULT_TYPE_HTTPNOTFOUND = "HttpNotFoundResult";
+        const PARAM_RESULT_TYPE_REDIRECT     = "RedirectResult";
+
+
         public  $route;
         public  $request;
         public  $response;
         public  $view;
         private $viewname = NULL;
+        private $resultType = NULL;
 
         function __construct(Route $route, Request $request) {
             $this->route    = $route;
@@ -24,17 +33,21 @@
         }
 
         function __destruct() {
-            $this->onEnd();
         }
 
         /**
          * @return Response Your Decision
+         *                  Executes this block before execute the action.
          */
-        public function onStart() {
+        public function onActionExecuting() {
 
         }
 
-        public function onEnd() {
+        /**
+         * @return Response Your Decision
+         *                  Executes this block after execute the action and before go to view.
+         */
+        public function onActionExecuted() {
 
         }
 
@@ -53,38 +66,16 @@
             }
             $this->viewname = $viewname;
 
+            $responseExecuting = $this->onActionExecuting();
+            if($responseExecuting instanceof Response) {
+                return $responseExecuting;
+            }
+
             return call_user_func_array(array(
                                             $this,
                                             $action
                                         ), $params);
-        }
 
-        /**
-         * Renders View
-         *
-         * @param string $model Model
-         * @param string $viewname Viewname
-         *
-         * @return Response
-         */
-        public function view($model = NULL, $viewname = NULL) {
-            $viewname = $this->getViewName($viewname);
-
-            return $this->view->getContent($viewname, $model);
-        }
-
-        /**
-         * Renders Partial View
-         *
-         * @param mixed  $model Model
-         * @param string $viewname Viewname
-         *
-         * @return Response
-         */
-        public function partialView($model = NULL, $viewname = NULL) {
-            $viewname = $this->getViewName($viewname);
-
-            return $this->view->getContent($viewname, $model, TRUE);
         }
 
         /**
@@ -103,14 +94,66 @@
         }
 
         /**
+         * Gets the result type of executed action.
+         *
+         * @return string
+         */
+        public function getResultType() {
+            return $this->resultType;
+        }
+
+        /**
+         * Renders View
+         *
+         * @param string $model    Model
+         * @param string $viewname Viewname
+         *
+         * @return Response
+         */
+        public function view($model = NULL, $viewname = NULL) {
+            $this->resultType = self::PARAM_RESULT_TYPE_VIEW;
+            $responseExecuted = $this->onActionExecuted();
+            if($responseExecuted instanceof Response) {
+                return $responseExecuted;
+            }
+            $viewname = $this->getViewName($viewname);
+
+            return $this->view->getContent($viewname, $model);
+        }
+
+        /**
+         * Renders Partial View
+         *
+         * @param mixed  $model    Model
+         * @param string $viewname Viewname
+         *
+         * @return Response
+         */
+        public function partialView($model = NULL, $viewname = NULL) {
+            $this->resultType = self::PARAM_RESULT_TYPE_PARTIALVIEW;
+            $responseExecuted = $this->onActionExecuted();
+            if($responseExecuted instanceof Response) {
+                return $responseExecuted;
+            }
+            $viewname = $this->getViewName($viewname);
+
+            return $this->view->getContent($viewname, $model, TRUE);
+        }
+
+        /**
          * Renders data as json object
          *
-         * @param array $model Model
+         * @param array $model  Model
          * @param bool  $encode Encode
          *
          * @return Response
          */
         public function json($model, $encode = TRUE) {
+            $this->resultType = self::PARAM_RESULT_TYPE_JSON;
+            $responseExecuted = $this->onActionExecuted();
+            if($responseExecuted instanceof Response) {
+                return $responseExecuted;
+            }
             $json = ($encode) ? json_encode($model) : $model;
 
             $this->response->clear()
@@ -124,13 +167,18 @@
         /**
          * Renders data as jsonp
          *
-         * @param array  $model Model
-         * @param string $param QueryString Parameter
+         * @param array  $model  Model
+         * @param string $param  QueryString Parameter
          * @param bool   $encode Encode
          *
          * @return Response
          */
         public function jsonp($model, $param = 'jsonp', $encode = TRUE) {
+            $this->resultType = self::PARAM_RESULT_TYPE_JSONP;
+            $responseExecuted = $this->onActionExecuted();
+            if($responseExecuted instanceof Response) {
+                return $responseExecuted;
+            }
             $json = ($encode) ? json_encode($model) : $model;
 
             $callback = $this->request->query[$param];
@@ -150,9 +198,15 @@
          * @return Response
          */
         public function notFound() {
+            $this->resultType = self::PARAM_RESULT_TYPE_HTTPNOTFOUND;
+            $responseExecuted = $this->onActionExecuted();
+            if($responseExecuted instanceof Response) {
+                return $responseExecuted;
+            }
             $this->response->clear()
                            ->status(404);
-            return $this->view->getContent('error/404',NULL,TRUE);
+
+            return $this->view->getContent('error/404', NULL, TRUE);
         }
 
         /**
@@ -166,13 +220,18 @@
          * @return Response
          */
         public function redirectToAction($controller = NULL, $action = "Index", $routeParams = array(), $code = 302) {
+            $this->resultType = self::PARAM_RESULT_TYPE_REDIRECT;
+            $responseExecuted = $this->onActionExecuted();
+            if($responseExecuted instanceof Response) {
+                return $responseExecuted;
+            }
             $base = Wow::get('app.base_url');
 
             if($base === NULL) {
                 $base = $this->request->base;
             }
 
-            if($controller === NULL){
+            if($controller === NULL) {
                 $controller = $this->route->params["controller"];
             }
 
@@ -210,6 +269,11 @@
          * @return Response
          */
         public function redirectToUrl($url, $code = 302) {
+            $this->resultType = self::PARAM_RESULT_TYPE_REDIRECT;
+            $responseExecuted = $this->onActionExecuted();
+            if($responseExecuted instanceof Response) {
+                return $responseExecuted;
+            }
             $base = Wow::get('app.base_url');
 
             if($base === NULL) {

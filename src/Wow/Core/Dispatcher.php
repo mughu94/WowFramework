@@ -260,10 +260,6 @@
             $route->params["controller"] = $fixedClassName;
             $route->params["action"]     = $fixedMethodName;
             $ControllerClass             = new $psr4ClassName($route, $request);
-            $actionExecuting             = $ControllerClass->onStart();
-            if($actionExecuting instanceof Response) {
-                return $actionExecuting;
-            }
 
             return $ControllerClass->init($fixedMethodName . "Action", $fixedViewName, $methodValues);
 

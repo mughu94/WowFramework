@@ -10,16 +10,15 @@
         /**
          * Override onStart
          */
-        function onStart() {
-
-
+        function onActionExecuting() {
+            parent::onActionExecuting();
         }
 
         /**
          * Override onEnd
          */
-        function onEnd() {
-
+        function onActionExecuted() {
+            parent::onActionExecuted();
         }
 
     }
