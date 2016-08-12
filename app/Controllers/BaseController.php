@@ -8,14 +8,14 @@
 
 
         /**
-         * Override onStart
+         * Override onActionExecuting
          */
         function onActionExecuting() {
             parent::onActionExecuting();
         }
 
         /**
-         * Override onEnd
+         * Override onActionExecuted
          */
         function onActionExecuted() {
             parent::onActionExecuted();
