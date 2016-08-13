@@ -10,12 +10,12 @@
 
     class Controller {
 
-        const PARAM_RESULT_TYPE_VIEW         = "ViewResult";
-        const PARAM_RESULT_TYPE_PARTIALVIEW  = "PartialViewResult";
-        const PARAM_RESULT_TYPE_JSON         = "JsonResult";
-        const PARAM_RESULT_TYPE_JSONP        = "JsonPResult";
-        const PARAM_RESULT_TYPE_HTTPNOTFOUND = "HttpNotFoundResult";
-        const PARAM_RESULT_TYPE_REDIRECT     = "RedirectResult";
+        const RESULT_TYPE_VIEW         = "ViewResult";
+        const RESULT_TYPE_PARTIALVIEW  = "PartialViewResult";
+        const RESULT_TYPE_JSON         = "JsonResult";
+        const RESULT_TYPE_JSONP        = "JsonPResult";
+        const RESULT_TYPE_HTTPNOTFOUND = "HttpNotFoundResult";
+        const RESULT_TYPE_REDIRECT     = "RedirectResult";
 
 
         public  $route;
@@ -111,7 +111,7 @@
          * @return Response
          */
         public function view($model = NULL, $viewname = NULL) {
-            $this->resultType = self::PARAM_RESULT_TYPE_VIEW;
+            $this->resultType = self::RESULT_TYPE_VIEW;
             $responseExecuted = $this->onActionExecuted();
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
@@ -130,7 +130,7 @@
          * @return Response
          */
         public function partialView($model = NULL, $viewname = NULL) {
-            $this->resultType = self::PARAM_RESULT_TYPE_PARTIALVIEW;
+            $this->resultType = self::RESULT_TYPE_PARTIALVIEW;
             $responseExecuted = $this->onActionExecuted();
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
@@ -149,7 +149,7 @@
          * @return Response
          */
         public function json($model, $encode = TRUE) {
-            $this->resultType = self::PARAM_RESULT_TYPE_JSON;
+            $this->resultType = self::RESULT_TYPE_JSON;
             $responseExecuted = $this->onActionExecuted();
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
@@ -174,7 +174,7 @@
          * @return Response
          */
         public function jsonp($model, $param = 'jsonp', $encode = TRUE) {
-            $this->resultType = self::PARAM_RESULT_TYPE_JSONP;
+            $this->resultType = self::RESULT_TYPE_JSONP;
             $responseExecuted = $this->onActionExecuted();
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
@@ -198,7 +198,7 @@
          * @return Response
          */
         public function notFound() {
-            $this->resultType = self::PARAM_RESULT_TYPE_HTTPNOTFOUND;
+            $this->resultType = self::RESULT_TYPE_HTTPNOTFOUND;
             $responseExecuted = $this->onActionExecuted();
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
@@ -220,7 +220,7 @@
          * @return Response
          */
         public function redirectToAction($controller = NULL, $action = "Index", $routeParams = array(), $code = 302) {
-            $this->resultType = self::PARAM_RESULT_TYPE_REDIRECT;
+            $this->resultType = self::RESULT_TYPE_REDIRECT;
             $responseExecuted = $this->onActionExecuted();
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
@@ -269,7 +269,7 @@
          * @return Response
          */
         public function redirectToUrl($url, $code = 302) {
-            $this->resultType = self::PARAM_RESULT_TYPE_REDIRECT;
+            $this->resultType = self::RESULT_TYPE_REDIRECT;
             $responseExecuted = $this->onActionExecuted();
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
