@@ -122,6 +122,7 @@ All the actions must return a Response Object. There are some result types (Resp
 - JsonPResult
 - RedirectResult
 - HttpNotFoundResult
+- FileResult
 
 These result types are declared as constants in Controller class.
 
@@ -184,6 +185,46 @@ An example for this:
         
         return $this->view();
     }
+    
+#### Passing data to Views
+
+Example:
+
+    $this->view->set("title",$product["title"]);    
 
 ##Views
-The view files are stored in app/Views folder. The view files are pure php files.
+The view files are stored in app/Views folder. The view files are pure php files. Wow Framework's View Class has a name = value array which is used to pass data from Controller Method to View file. The get(name), set(name,value), has(name), clear(name) methods for name value pairs.
+
+For example in a view file you can use:
+
+    $this->set("title","Home");
+   
+Also yo can manipulate a defined:
+    
+    $titleFromController = $this->get("title");
+    $title = $titleFromController." | My Site Name";
+    $this->set("title",$title);
+    
+#### Layouts
+A view file can be used as master view. These files are generally stored in app/Views/layout
+
+Layout files can include sections. A sample code for section;
+    
+    <html>
+    <head>
+    <title><?php echo $this->get("title"); ?></title>
+    </head>
+    <body>
+    <?php $this->renderBody(); ?>
+    <?php $this->section("section_scripts"); ?>
+    <script src="/assets/path/to/script.js"></script>
+    <?php $this->show(); ?>
+    </body>
+    </html>
+    
+The renderBody() method appends html wihch came from ActionResult's View file.
+ActionResult's View file can manipulate the sections. We will tell it in Sections.
+
+#### Sections
+
+Preparing..

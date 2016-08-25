@@ -16,13 +16,14 @@
         const RESULT_TYPE_JSONP        = "JsonPResult";
         const RESULT_TYPE_HTTPNOTFOUND = "HttpNotFoundResult";
         const RESULT_TYPE_REDIRECT     = "RedirectResult";
+        const RESULT_TYPE_FILE         = "FileResult";
 
 
         public  $route;
         public  $request;
         public  $response;
         public  $view;
-        private $viewname = NULL;
+        private $viewname   = NULL;
         private $resultType = NULL;
 
         function __construct(Route $route, Request $request) {
@@ -207,6 +208,31 @@
                            ->status(404);
 
             return $this->view->getContent('error/404', NULL, TRUE);
+        }
+
+        /**
+         * Returns a File Response
+         *
+         * @param string $file
+         *
+         * @return Response
+         */
+        public function file($buffer, $mimeType, $fileName, $force_download = FALSE) {
+            $this->resultType = self::RESULT_TYPE_FILE;
+            $responseExecuted = $this->onActionExecuted();
+            if($responseExecuted instanceof Response) {
+                return $responseExecuted;
+            }
+            $this->response->clear()
+                           ->status(200)
+                           ->header("Content-Type", $mimeType)
+                           ->header("Content-Disposition", $force_download ? 'attachment; filename="' . $fileName . '"' : 'filename="' . $fileName . '"')
+                           ->write($buffer);
+            if($force_download) {
+                $this->response->header("", "");
+            }
+
+            return $this->response;
         }
 
         /**
