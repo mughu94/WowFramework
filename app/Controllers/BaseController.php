@@ -3,6 +3,7 @@
     namespace Wow\Controllers;
 
     use Wow\Core\Controller;
+    use Wow\Net\Response;
 
     class BaseController extends Controller {
 
@@ -11,14 +12,20 @@
          * Override onActionExecuting
          */
         function onActionExecuting() {
-            parent::onActionExecuting();
+            $actionResponse = parent::onActionExecuting();
+            if($actionResponse instanceof Response) {
+                return $actionResponse;
+            }
         }
 
         /**
          * Override onActionExecuted
          */
         function onActionExecuted() {
-            parent::onActionExecuted();
+            $actionResponse = parent::onActionExecuted();
+            if($actionResponse instanceof Response) {
+                return $actionResponse;
+            }
         }
 
     }
