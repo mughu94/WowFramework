@@ -463,11 +463,70 @@
         /**
          * Gets translated key
          *
-         * @param $key
+         * @param       $key
+         * @param array $values
+         * @param null  $language
+         *
+         * @return mixed|null
          */
-        public function translate($key, $values = array()) {
-            $activeLang = $this->selectedLanguage;
-            //TODO Add language translator.
+        public function translate($key, $values = array(), $language = NULL) {
+            if(empty($key)) {
+                return NULL;
+            }
+            if(is_null($language)) {
+                $language = $this->selectedLanguage;
+            }
+
+            //If language array is nor defined, we will define it.
+            if(!isset($this->languages[$language])) {
+                $this->loadTranslation($language);
+            }
+
+            //Let's control if the key exists and return
+            $returnText = isset($this->languages[$this->selectedLanguage][$key]) ? $this->languages[$this->selectedLanguage][$key] : ($language == Wow::get("app.language") ? $key : $this->translate($key, $values, Wow::get("app.language")));
+            foreach($values as $k => $v) {
+                $returnText = str_replace(":" . $k, $v, $returnText);
+            }
+
+            return $returnText;
+        }
+
+        /**
+         * Load translations from files
+         *
+         * @param string $language
+         *
+         * @throws Exception
+         */
+        private function loadTranslation($language) {
+            $langFiles = glob(__DIR__ . '/../../../app/Languages/' . $language . '/*.php');
+            $lang      = array();
+            try {
+                foreach($langFiles as $file) {
+                    $lang[basename($file, ".php")] = include $file;
+                }
+            } catch(Exception $e) {
+                throw new Exception("Please control your (" . $language . ") language files. All files must return array!");
+            }
+            $this->setTranslations($lang, $language);
+        }
+
+
+        /**
+         * Set Translation array
+         *
+         * @param array  $array
+         * @param string $language
+         * @param string $path
+         */
+        private function setTranslations(array $array, $language, $path = NULL) {
+            foreach($array as $k => $v) {
+                if(!is_array($v)) {
+                    $this->languages[$language][$path . "/" . $k] = $v;
+                } else {
+                    $this->setTranslations($v, $language, is_null($path) ? $k : $path . "/" . $k);
+                }
+            }
         }
     }
 
