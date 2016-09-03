@@ -221,11 +221,16 @@
              * @var Controller $ControllerClass
              */
 
-            //Fix for autoloaders case sensivity.
-            $fixedViewName   = implode("-", array_map("strtolower", explode("-", $route->params["controller"]))) . "/" . implode("-", array_map("strtolower", explode("-", $route->params["action"])));
-            $fixedClassName  = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $route->params["controller"]))));
+            if(empty($route->getFixedNames())){
+                return FALSE;
+            }
+
+            $fixedNames = $route->getFixedNames();
+            $fixedClassName  = $fixedNames["className"];
+            $fixedMethodName = $fixedNames["methodName"];
+            $fixedViewName   = $fixedNames["viewName"];
             $psr4ClassName   = "App\\Controllers\\" . $fixedClassName . "Controller";
-            $fixedMethodName = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $route->params["action"]))));
+
             if(!class_exists($psr4ClassName)) {
                 return FALSE;
             } elseif(!method_exists($psr4ClassName, $fixedMethodName . "Action") || !is_callable($psr4ClassName, $fixedMethodName . "Action")) {

@@ -33,6 +33,11 @@
          */
         public $case_sensitive;
 
+        /**
+         * @var array
+         */
+        protected $fixedNames = array();
+
 
         /**
          * Constructor.
@@ -60,6 +65,7 @@
             // Wildcard or exact match
             if($this->pattern === '*' || $this->pattern === $url) {
                 $this->params = array_merge($this->defaults, $this->params);
+                $this->setFixedNames();
 
                 return TRUE;
             }
@@ -120,6 +126,7 @@
 
                 //Merge with defaults
                 $this->params = array_merge($this->defaults, $this->params);
+                $this->setFixedNames();
 
                 return TRUE;
             }
@@ -139,5 +146,26 @@
                                              $method,
                                              '*'
                                          ), $this->methods)) > 0;
+        }
+
+        /**
+         * Fix for autoloaders case sensivity.
+         */
+        private function setFixedNames() {
+            $fixedClassName   = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["controller"]))));
+            $fixedMethodName  = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["action"]))));
+            $fixedViewName    = implode("-", array_map("strtolower", explode("-", $this->params["controller"]))) . "/" . implode("-", array_map("strtolower", explode("-", $this->params["action"])));
+            $this->fixedNames = array(
+                "className"  => $fixedClassName,
+                "methodName" => $fixedMethodName,
+                "viewName"   => $fixedViewName
+            );
+        }
+
+        /**
+         * Get fixed names
+         */
+        public function getFixedNames(){
+            return $this->fixedNames;
         }
     }
