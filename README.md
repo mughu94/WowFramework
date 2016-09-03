@@ -60,7 +60,7 @@ The route matching mechanism suports case-sensitive and case-insensitive matchin
 The case-insensitive route matching means that: if you define a route like /upgrade(/@conroller(/@method)) does not match for uri /Upgrade/version/latest because of Upgrade not equals upgrade!
 
 ##Controllers
-Controllers are stored in app/Controllers folder under namespace Wow\Controllers
+Controllers are stored in app/Controllers folder under namespace App\Controllers
 
 ### Controller Classes
 You must capitalize the first letters of your Controller's name and also file name, and add Controller to end of name.
@@ -206,7 +206,7 @@ Also yo can manipulate a defined:
     $this->set("title",$title);
     
 #### Layouts
-A view file can be used as master view. These files are generally stored in app/Views/layout
+A view file can be used as master view. These files are generally stored in app/Views/{theme_name}/layout
 
 Layout files can include sections. A sample code for section;
     
