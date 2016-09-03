@@ -123,9 +123,9 @@
             $this->response = new Response();
             $this->html     = new Html($request, $this->response);
             $this->route    = $route;
-            $this->setTheme(Wow::get('app.theme'));
-            $this->setLayout(Wow::get('app.layout'));
-            $this->setLanguage(Wow::get('app.language'));
+            $this->setTheme(Wow::get('app/theme'));
+            $this->setLayout(Wow::get('app/layout'));
+            $this->setLanguage(Wow::get('app/language'));
         }
 
 
@@ -483,7 +483,7 @@
             }
 
             //Let's control if the key exists and return
-            $returnText = isset($this->languages[$this->selectedLanguage][$key]) ? $this->languages[$this->selectedLanguage][$key] : ($language == Wow::get("app.language") ? $key : $this->translate($key, $values, Wow::get("app.language")));
+            $returnText = isset($this->languages[$this->selectedLanguage][$key]) ? $this->languages[$this->selectedLanguage][$key] : ($language == Wow::get("app/language") ? $key : $this->translate($key, $values, Wow::get("app/language")));
             foreach($values as $k => $v) {
                 $returnText = str_replace(":" . $k, $v, $returnText);
             }

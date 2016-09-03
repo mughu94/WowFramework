@@ -116,7 +116,7 @@
             }
 
             // Default configuration settings from config file
-            $myConfigArray = include __DIR__ . "/../../app/Config/Config.php";
+            $myConfigArray = include __DIR__ . "/../../app/Config/config.php";
             foreach($myConfigArray as $key => $value) {
                 foreach($value as $item => $val) {
                     $this->set($key . "." . $item, $val);
@@ -125,9 +125,9 @@
             }
 
             // Route configuration from routes file
-            $myRoutesArray = include __DIR__ . "/../../app/Config/Routes.php";
+            $myRoutesArray = include __DIR__ . "/../../app/Config/routes.php";
             foreach($myRoutesArray as $item => $val) {
-                $this->router->map($val[0], $val[1], count($val) > 2 ? $val[2] : $this->get('app.router_case_sensitive'));
+                $this->router->map($val[0], $val[1], count($val) > 2 ? $val[2] : $this->get('app/router_case_sensitive'));
             }
 
 
@@ -179,7 +179,7 @@
          * @param Exception $e Thrown exception
          */
         public function handleException(Exception $e) {
-            if($this->get('app.log_errors')) {
+            if($this->get('app/log_errors')) {
                 error_log($e->getMessage());
             }
 
@@ -325,7 +325,7 @@
 
 
             // Enable error handling
-            $this->handleErrors($this->get('app.handle_errors'));
+            $this->handleErrors($this->get('app/handle_errors'));
 
 
             // Allow post-filters to run

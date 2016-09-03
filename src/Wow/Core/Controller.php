@@ -251,7 +251,7 @@
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
             }
-            $base = Wow::get('app.base_url');
+            $base = Wow::get('app/base_url');
 
             if($base === NULL) {
                 $base = $this->request->base;
@@ -300,7 +300,7 @@
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
             }
-            $base = Wow::get('app.base_url');
+            $base = Wow::get('app/base_url');
 
             if($base === NULL) {
                 $base = $this->request->base;
