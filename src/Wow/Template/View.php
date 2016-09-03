@@ -63,6 +63,26 @@
          * @var array
          */
         protected $sections = array();
+        /**
+         * Languages
+         *
+         * @var array
+         */
+
+        /**
+         * Theme
+         *
+         * @var string
+         */
+        protected $theme = "default";
+
+        protected $languages = array();
+        /**
+         * Active Language
+         *
+         * @var string
+         */
+        protected $selectedLanguage = "en";
 
         /**
          * Selected section to prepend or append content.
@@ -103,7 +123,9 @@
             $this->response = new Response();
             $this->html     = new Html($request, $this->response);
             $this->route    = $route;
+            $this->setTheme(Wow::get('app.theme'));
             $this->setLayout(Wow::get('app.layout'));
+            $this->setLanguage(Wow::get('app.language'));
         }
 
 
@@ -177,6 +199,42 @@
          */
         public function setSection($section, $content = NULL) {
             $this->sections[$section] = $content;
+        }
+
+        /**
+         * Sets active language
+         *
+         * @param string $language
+         */
+        public function setLanguage($language) {
+            $this->selectedLanguage = $language;
+        }
+
+        /**
+         * Gets the current language
+         *
+         * @return mixed|string
+         */
+        public function getLanguage() {
+            return $this->selectedLanguage;
+        }
+
+        /**
+         * Sets active theme
+         *
+         * @param string $theme
+         */
+        public function setTheme($theme) {
+            $this->theme = $theme;
+        }
+
+        /**
+         * Gets the current language
+         *
+         * @return mixed|string
+         */
+        public function getTheme() {
+            return $this->theme;
         }
 
         /**
@@ -385,9 +443,9 @@
                 $viewname .= '.php';
             }
             if((substr($viewname, 0, 1) == '/')) {
-                return $viewname;
+                return './app/Views/' . $this->theme . $viewname;
             } else {
-                return './app/Views/' . $viewname;
+                return './app/Views/' . $this->theme . '/' . $viewname;
             }
         }
 
@@ -400,6 +458,16 @@
          */
         public function e($str) {
             echo htmlentities($str);
+        }
+
+        /**
+         * Gets translated key
+         *
+         * @param $key
+         */
+        public function translate($key, $values = array()) {
+            $activeLang = $this->selectedLanguage;
+            //TODO Add language translator.
         }
     }
 
