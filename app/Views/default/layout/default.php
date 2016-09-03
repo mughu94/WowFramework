@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/bootstrap/3.3.6/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="/assets/Style/Style.css">
+    <link rel="stylesheet" href="/assets/style/style.css">
     <title><?php if($this->has('title')) {
             echo $this->get("title") . " | ";
         } ?>Wow</title>
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/"><img src="/assets/Images/Logo.png"/></a>
+            <a class="navbar-brand" href="/"><img src="/assets/images/logo.png"/></a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <p class="navbar-text navbar-right">
