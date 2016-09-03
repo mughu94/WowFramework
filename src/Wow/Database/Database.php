@@ -77,7 +77,7 @@
          */
         private function Connect($connectionName = "DefaultConnection") {
             // Get database properties from Config File
-            if(Wow::has("database." . $connectionName)) {
+            if(Wow::has("database/" . $connectionName)) {
                 $this->settings = Wow::get("database/" . $connectionName);
             } else {
                 throw new Exception("Database properties (named: " . $connectionName . ") could not found in Config file!");

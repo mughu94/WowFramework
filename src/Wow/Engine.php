@@ -119,7 +119,7 @@
             $myConfigArray = include __DIR__ . "/../../app/Config/config.php";
             foreach($myConfigArray as $key => $value) {
                 foreach($value as $item => $val) {
-                    $this->set($key . "." . $item, $val);
+                    $this->set($key . "/" . $item, $val);
                 }
 
             }
