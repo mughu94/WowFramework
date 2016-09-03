@@ -31,6 +31,11 @@
             $this->request  = $request;
             $this->response = new Response();
             $this->view     = new View($request, $route);
+
+            //Autodedect User Language. This framework is MVCL ;)
+            if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+                $this->view->setLanguage(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
+            }
         }
 
         function __destruct() {
