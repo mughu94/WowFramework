@@ -64,7 +64,6 @@
         public function matchUrl($url) {
             // Wildcard or exact match
             if($this->pattern === '*' || $this->pattern === $url) {
-                $this->params = array_merge($this->defaults, $this->params);
                 $this->setFixedNames();
 
                 return TRUE;
@@ -124,8 +123,6 @@
                     }
                 }
 
-                //Merge with defaults
-                $this->params = array_merge($this->defaults, $this->params);
                 $this->setFixedNames();
 
                 return TRUE;
@@ -152,14 +149,20 @@
          * Fix for autoloaders case sensivity.
          */
         private function setFixedNames() {
-            $fixedClassName   = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["controller"]))));
-            $fixedMethodName  = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["action"]))));
-            $fixedViewName    = implode("-", array_map("strtolower", explode("-", $this->params["controller"]))) . "/" . implode("-", array_map("strtolower", explode("-", $this->params["action"])));
+
+            $fixedClassName  = isset($this->params["controller"]) ? implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["controller"])))) : $this->defaults["controller"];
+            $fixedMethodName = isset($this->params["action"]) ? implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["action"])))) : $this->defaults["action"];
+            $fixedViewName   = isset($this->params["controller"]) ? implode("-", array_map("strtolower", explode("-", $this->params["controller"]))) : implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->defaults["controller"],-1,PREG_SPLIT_NO_EMPTY)));
+            $fixedViewName .= "/";
+            $fixedViewName .= isset($this->params["action"]) ? implode("-", array_map("strtolower", explode("-", $this->params["action"]))) : implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->defaults["action"],-1,PREG_SPLIT_NO_EMPTY)));
+
             $this->fixedNames = array(
                 "className"  => $fixedClassName,
                 "methodName" => $fixedMethodName,
                 "viewName"   => $fixedViewName
             );
+            //Merge with defaults
+            $this->params = array_merge($this->defaults, $this->params);
         }
 
         /**

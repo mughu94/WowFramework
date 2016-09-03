@@ -4,7 +4,6 @@
 
     use ReflectionMethod;
     use Wow\Net\Request;
-    use Wow\Net\Response;
     use Wow\Net\Route;
 
     /**
