@@ -482,8 +482,9 @@
                 $this->loadTranslation($language);
             }
 
+
             //Let's control if the key exists and return
-            $returnText = isset($this->languages[$this->selectedLanguage][$key]) ? $this->languages[$this->selectedLanguage][$key] : ($language == Wow::get("app/language") ? $key : $this->translate($key, $values, Wow::get("app/language")));
+            $returnText = isset($this->languages[$language][$key]) ? $this->languages[$language][$key] : ($language == Wow::get("app/language") ? $key : $this->translate($key, $values, Wow::get("app/language")));
             foreach($values as $k => $v) {
                 $returnText = str_replace(":" . $k, $v, $returnText);
             }
