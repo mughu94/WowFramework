@@ -221,11 +221,11 @@
              * @var Controller $ControllerClass
              */
 
-            if(empty($route->getFixedNames())){
+            $fixedNames = $route->getFixedNames();
+            if(empty($fixedNames)){
                 return FALSE;
             }
 
-            $fixedNames = $route->getFixedNames();
             $fixedClassName  = $fixedNames["className"];
             $fixedMethodName = $fixedNames["methodName"];
             $fixedViewName   = $fixedNames["viewName"];
