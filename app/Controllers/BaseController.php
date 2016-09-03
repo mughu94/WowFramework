@@ -1,6 +1,6 @@
 <?php
 
-    namespace Wow\Controllers;
+    namespace App\Controllers;
 
     use Wow\Core\Controller;
     use Wow\Net\Response;

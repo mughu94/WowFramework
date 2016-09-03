@@ -224,7 +224,7 @@
             //Fix for autoloaders case sensivity.
             $fixedViewName   = implode("-", array_map("strtolower", explode("-", $route->params["controller"]))) . "/" . implode("-", array_map("strtolower", explode("-", $route->params["action"])));
             $fixedClassName  = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $route->params["controller"]))));
-            $psr4ClassName   = "Wow\\Controllers\\" . $fixedClassName . "Controller";
+            $psr4ClassName   = "App\\Controllers\\" . $fixedClassName . "Controller";
             $fixedMethodName = implode("", array_map("ucfirst", array_map("strtolower", explode("-", $route->params["action"]))));
             if(!class_exists($psr4ClassName)) {
                 return FALSE;
