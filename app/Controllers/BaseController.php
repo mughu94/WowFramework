@@ -12,20 +12,14 @@
          * Override onActionExecuting
          */
         function onActionExecuting() {
-            $actionResponse = parent::onActionExecuting();
-            if($actionResponse instanceof Response) {
-                return $actionResponse;
-            }
+            if($pass = parent::onActionExecuting() instanceof Response) return $pass;
         }
 
         /**
          * Override onActionExecuted
          */
         function onActionExecuted() {
-            $actionResponse = parent::onActionExecuted();
-            if($actionResponse instanceof Response) {
-                return $actionResponse;
-            }
+            if($pass = parent::onActionExecuted() instanceof Response) return $pass;
         }
 
     }
