@@ -457,7 +457,7 @@
          * @return string Escaped string
          */
         public function e($str) {
-            echo htmlentities($str);
+            echo htmlentities($str, ENT_COMPAT, "UTF-8");
         }
 
         /**
