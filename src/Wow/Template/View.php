@@ -451,7 +451,6 @@
 
         /**
          * Displays escaped output.
-         *
          * @param string $str String to escape
          *
          * @return string Escaped string
