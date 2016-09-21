@@ -451,12 +451,13 @@
 
         /**
          * Displays escaped output.
+         *
          * @param string $str String to escape
          *
          * @return string Escaped string
          */
         public function e($str) {
-            echo htmlentities($str, ENT_COMPAT, "UTF-8");
+            return htmlentities($str, ENT_COMPAT, "UTF-8");
         }
 
         /**
