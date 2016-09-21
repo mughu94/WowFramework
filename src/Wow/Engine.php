@@ -116,7 +116,7 @@
             }
 
             // Default configuration settings from config file
-            $myConfigArray = include __DIR__ . "/../../app/Config/config.php";
+            $myConfigArray = include $_SERVER["LOCAL_ADDR"]=="127.0.0.1" ? __DIR__ . "/../../app/Config/config.local.php" : __DIR__ . "/../../app/Config/config.php";
             foreach($myConfigArray as $key => $value) {
                 foreach($value as $item => $val) {
                     $this->set($key . "/" . $item, $val);
