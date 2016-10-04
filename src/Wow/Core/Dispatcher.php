@@ -221,14 +221,15 @@
              */
 
             $fixedNames = $route->getFixedNames();
-            if(empty($fixedNames)){
+            if(empty($fixedNames)) {
                 return FALSE;
             }
 
             $fixedClassName  = $fixedNames["className"];
             $fixedMethodName = $fixedNames["methodName"];
             $fixedViewName   = $fixedNames["viewName"];
-            $psr4ClassName   = "App\\Controllers\\" . $fixedClassName . "Controller";
+            $fixedPrefix     = $fixedNames["prefix"];
+            $psr4ClassName   = "App\\Controllers\\" . $fixedPrefix . $fixedClassName . "Controller";
 
             if(!class_exists($psr4ClassName)) {
                 return FALSE;

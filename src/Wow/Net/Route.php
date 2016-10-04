@@ -152,14 +152,16 @@
 
             $fixedClassName  = isset($this->params["controller"]) ? implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["controller"])))) : $this->defaults["controller"];
             $fixedMethodName = isset($this->params["action"]) ? implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["action"])))) : $this->defaults["action"];
-            $fixedViewName   = isset($this->params["controller"]) ? implode("-", array_map("strtolower", explode("-", $this->params["controller"]))) : implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->defaults["controller"],-1,PREG_SPLIT_NO_EMPTY)));
+            $fixedViewName   = isset($this->params["controller"]) ? implode("-", array_map("strtolower", explode("-", $this->params["controller"]))) : implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->defaults["controller"], -1, PREG_SPLIT_NO_EMPTY)));
             $fixedViewName .= "/";
-            $fixedViewName .= isset($this->params["action"]) ? implode("-", array_map("strtolower", explode("-", $this->params["action"]))) : implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->defaults["action"],-1,PREG_SPLIT_NO_EMPTY)));
+            $fixedViewName .= isset($this->params["action"]) ? implode("-", array_map("strtolower", explode("-", $this->params["action"]))) : implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->defaults["action"], -1, PREG_SPLIT_NO_EMPTY)));
+            $fixedPrefix = (isset($this->defaults["prefix"]) && !empty($this->defaults["prefix"])) ? implode("\\", explode("/", $this->defaults["prefix"])) . '\\' : '';
 
             $this->fixedNames = array(
                 "className"  => $fixedClassName,
                 "methodName" => $fixedMethodName,
-                "viewName"   => $fixedViewName
+                "viewName"   => $fixedViewName,
+                "prefix"     => $fixedPrefix
             );
             //Merge with defaults
             $this->params = array_merge($this->defaults, $this->params);
@@ -168,7 +170,7 @@
         /**
          * Get fixed names
          */
-        public function getFixedNames(){
+        public function getFixedNames() {
             return $this->fixedNames;
         }
     }
