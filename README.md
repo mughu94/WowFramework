@@ -40,6 +40,7 @@ Our routes are these
             "DefaultRoute" => array(
                 "(/@controller(/@action(/@id)))",
                 array(
+                    "prefix"     => "",
                     "controller" => "Home",
                     "action"     => "Index"
                 )
@@ -50,6 +51,8 @@ So the url /About extends to
 * Controller : AboutController
 * Action: IndexAction()
 * View Name: about/index
+
+You can add a prefix folder to your routes, and group your controllers in folders.
 
 Routes are defined in /app/Config/Routes.php file!
 
