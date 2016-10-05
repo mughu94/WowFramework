@@ -245,6 +245,7 @@
             $methodValues = $route->params;
             $methodParams = $objRefMethod->getParameters();
 
+            unset($methodValues["prefix"]);
             unset($methodValues["controller"]);
             unset($methodValues["action"]);
 
@@ -264,6 +265,7 @@
 
             $route->params["controller"] = $fixedClassName;
             $route->params["action"]     = $fixedMethodName;
+
             $ControllerClass             = new $psr4ClassName($route, $request);
 
             return $ControllerClass->init($fixedMethodName . "Action", $fixedViewName, $methodValues);
