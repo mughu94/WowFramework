@@ -1,5 +1,5 @@
 # WowFramework
-A lightweight extendable and powerful PHP MVC framework. Includes only general needs and optimized for speed.
+A lightweight, extendable, multilingual and powerful PHP MVC-L framework. Includes only general needs and optimized for speed.
 
 ##Routing
 The routing mechanism finds the Classname, Class Method and Method parameters from url.
