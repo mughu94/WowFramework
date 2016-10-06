@@ -227,7 +227,6 @@
 
             $fixedClassName  = $fixedNames["className"];
             $fixedMethodName = $fixedNames["methodName"];
-            $fixedViewName   = $fixedNames["viewName"];
             $fixedPrefix     = $fixedNames["prefix"];
             $psr4ClassName   = "App\\Controllers\\" . $fixedPrefix . $fixedClassName . "Controller";
 
@@ -266,9 +265,9 @@
             $route->params["controller"] = $fixedClassName;
             $route->params["action"]     = $fixedMethodName;
 
-            $ControllerClass             = new $psr4ClassName($route, $request);
+            $ControllerClass = new $psr4ClassName($route, $request);
 
-            return $ControllerClass->init($fixedMethodName . "Action", $fixedViewName, $methodValues);
+            return $ControllerClass->init($fixedMethodName . "Action", $methodValues);
 
         }
 

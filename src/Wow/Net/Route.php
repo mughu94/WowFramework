@@ -153,21 +153,11 @@
             $fixedPrefix     = (isset($this->defaults["prefix"]) && !empty($this->defaults["prefix"])) ? implode("\\", explode("/", $this->defaults["prefix"])) . '\\' : '';
             $fixedClassName  = isset($this->params["controller"]) ? implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["controller"])))) : $this->defaults["controller"];
             $fixedMethodName = isset($this->params["action"]) ? implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["action"])))) : $this->defaults["action"];
-            $fixedViewName   = "";
-            if(isset($this->defaults["prefix"]) && !empty($this->defaults["prefix"])) {
-                foreach(explode("/", $this->defaults["prefix"]) as $pieceOfPrefix) {
-                    $fixedViewName .= implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $pieceOfPrefix, -1, PREG_SPLIT_NO_EMPTY))) . '/';
-                }
-            }
-            $fixedViewName .= isset($this->params["controller"]) ? implode("-", array_map("strtolower", explode("-", $this->params["controller"]))) : implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->defaults["controller"], -1, PREG_SPLIT_NO_EMPTY)));
-            $fixedViewName .= "/";
-            $fixedViewName .= isset($this->params["action"]) ? implode("-", array_map("strtolower", explode("-", $this->params["action"]))) : implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->defaults["action"], -1, PREG_SPLIT_NO_EMPTY)));
 
 
             $this->fixedNames = array(
                 "className"  => $fixedClassName,
                 "methodName" => $fixedMethodName,
-                "viewName"   => $fixedViewName,
                 "prefix"     => $fixedPrefix
             );
             //Merge with defaults
