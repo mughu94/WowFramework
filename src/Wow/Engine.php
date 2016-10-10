@@ -116,7 +116,7 @@
             }
 
             // Default configuration settings from config file
-            $myConfigArray = include $_SERVER["LOCAL_ADDR"]=="127.0.0.1" ? __DIR__ . "/../../app/Config/config.local.php" : __DIR__ . "/../../app/Config/config.php";
+            $myConfigArray = include $_SERVER["LOCAL_ADDR"] == "127.0.0.1" ? __DIR__ . "/../../app/Config/config.local.php" : __DIR__ . "/../../app/Config/config.php";
             foreach($myConfigArray as $key => $value) {
                 foreach($value as $item => $val) {
                     $this->set($key . "/" . $item, $val);
@@ -351,8 +351,7 @@
 
             if(!$dispatched) {
                 $objErrorView   = new View($this->request);
-                $this->response = $objErrorView->getContent('error/404', NULL, TRUE);
-                $this->response->status(404);
+                $this->response = $objErrorView->getResponse('error/404', NULL, TRUE);
             }
         }
 
@@ -372,16 +371,17 @@
          * @param Exception $e
          */
         public function _error(Exception $e) {
-            $msg = sprintf('<h1>500 Internal Server Error</h1>' . '<h3>%s (%s)</h3>' . '<pre>%s</pre>', $e->getMessage(), $e->getCode(), $e->getTraceAsString());
             try {
                 ob_end_clean();
                 ob_start();
                 $objErrorView = new View($this->request);
-                $response     = $objErrorView->getContent('error/500', array('error' => $e), TRUE);
+                $response     = $objErrorView->getResponse('error/500', array('error' => $e), TRUE);
                 $response->send();
                 $output = ob_get_clean();
                 exit($output);
             } catch(Exception $ex) {
+                $msg = sprintf('<h1>500 Internal Server Error</h1>' . '<h3>%s (%s)</h3>' . '<pre>%s</pre>', $ex->getMessage(), $ex->getCode(), $ex->getTraceAsString());
+                ob_end_clean();
                 exit($msg);
             }
 

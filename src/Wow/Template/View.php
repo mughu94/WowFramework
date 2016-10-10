@@ -99,6 +99,13 @@
         protected $body = NULL;
 
         /**
+         * Temporary View Body
+         *
+         * @var string
+         */
+        protected $temporaryBody = NULL;
+
+        /**
          * Master Template
          *
          * @var string
@@ -339,7 +346,7 @@
          *
          * @return Response
          */
-        public function getContent($viewname, $model = NULL, $partial = FALSE) {
+        public function getResponse($viewname, $model = NULL, $partial = FALSE) {
             $this->body = $this->fetchView($viewname, $model);
             if($partial === TRUE || empty($this->layout)) {
                 $this->response->write($this->body);
@@ -348,6 +355,27 @@
             }
 
             return $this->response;
+        }
+
+        /**
+         * Executes View and returns It's Content
+         *
+         * @param string $viewname Viewname
+         * @param mixed  $model    Model
+         * @param bool   $partial  Is Partial
+         *
+         * @return string
+         */
+        public function getContent($viewname, $model = NULL, $partial = FALSE) {
+            $content = $this->fetchView($viewname, $model);
+            if($partial === FALSE && !empty($this->layout)) {
+                if(!empty($content)) {
+                    $this->temporaryBody = $content;
+                    $content             = $this->fetchView($this->layout, $model);
+                }
+            }
+
+            return $content;
         }
 
         /**
@@ -371,7 +399,10 @@
          * Prints Template Body
          */
         public function renderBody() {
-            if(!is_null($this->body)) {
+            if(!is_null($this->temporaryBody)) {
+                echo $this->temporaryBody;
+                $this->temporaryBody = NULL;
+            } else if(!is_null($this->body)) {
                 echo $this->body;
             }
         }

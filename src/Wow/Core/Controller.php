@@ -130,7 +130,7 @@
             }
             $viewname = $this->getViewName($viewname);
 
-            return $this->view->getContent($viewname, $model);
+            return $this->view->getResponse($viewname, $model);
         }
 
         /**
@@ -149,7 +149,7 @@
             }
             $viewname = $this->getViewName($viewname);
 
-            return $this->view->getContent($viewname, $model, TRUE);
+            return $this->view->getResponse($viewname, $model, TRUE);
         }
 
         /**
@@ -215,10 +215,8 @@
             if($responseExecuted instanceof Response) {
                 return $responseExecuted;
             }
-            $this->response->clear()
-                           ->status(404);
 
-            return $this->view->getContent('error/404', NULL, TRUE);
+            return $this->view->getResponse('error/404', NULL, TRUE);
         }
 
         /**
@@ -246,55 +244,6 @@
             return $this->response;
         }
 
-        /**
-         * Returns a Redirect Response.
-         *
-         * @param string $controller
-         * @param string $action
-         * @param array  $routeParams
-         * @param int    $code
-         *
-         * @return Response
-         */
-        public function redirectToAction($controller = NULL, $action = "Index", $routeParams = array(), $code = 302) {
-            $this->resultType = self::RESULT_TYPE_REDIRECT;
-            $responseExecuted = $this->onActionExecuted();
-            if($responseExecuted instanceof Response) {
-                return $responseExecuted;
-            }
-            $base = Wow::get('app/base_url');
-
-            if($base === NULL) {
-                $base = $this->request->base;
-            }
-
-            if($controller === NULL) {
-                $controller = $this->route->params["controller"];
-            }
-
-            $url = "/";
-            if($controller != "Home" || $action != "Index" || count($routeParams) > 0) {
-                $url .= implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $controller, -1, PREG_SPLIT_NO_EMPTY)));
-            }
-            if($action != "Index" || count($routeParams) > 0) {
-                $url .= "/" . implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $action, -1, PREG_SPLIT_NO_EMPTY)));
-            }
-            if(count($routeParams) > 0) {
-                $url .= "/" . implode("/", array_values($routeParams));
-            }
-
-            // Append base url to redirect url
-            if($base != '/' && strpos($url, '://') === FALSE) {
-                $url = preg_replace('#/+#', '/', $base . '/' . $url);
-            }
-
-            $this->response->clear()
-                           ->status($code)
-                           ->header('Location', $url)
-                           ->write($url);
-
-            return $this->response;
-        }
 
 
         /**
