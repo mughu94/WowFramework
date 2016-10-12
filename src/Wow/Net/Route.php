@@ -166,6 +166,8 @@
             );
             //Merge with defaults
             $this->params = array_merge($this->defaults, $this->params);
+            //Prefix is not a param. So remove it.
+            unset($this->params["prefix"]);
         }
 
         /**

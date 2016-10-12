@@ -92,13 +92,9 @@
         private function getViewName($viewname = NULL) {
             if(empty($viewname)) {
                 $viewname = "";
-                if(isset($this->route->defaults["prefix"]) && !empty($this->route->defaults["prefix"])) {
-                    foreach(explode("/", $this->route->defaults["prefix"]) as $pieceOfPrefix) {
-                        $viewname .= implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $pieceOfPrefix, -1, PREG_SPLIT_NO_EMPTY))) . '/';
-                    }
+                foreach(explode("/", $this->route->params["controller"]) as $piece) {
+                    $viewname .= implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $piece, -1, PREG_SPLIT_NO_EMPTY))) . "/";
                 }
-                $viewname .= implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->route->params["controller"], -1, PREG_SPLIT_NO_EMPTY)));
-                $viewname .= "/";
                 $viewname .= implode("-", array_map("strtolower", preg_split('/(?=[A-Z])/', $this->route->params["action"], -1, PREG_SPLIT_NO_EMPTY)));
             }
 
