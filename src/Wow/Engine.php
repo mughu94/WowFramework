@@ -374,6 +374,7 @@
             try {
                 ob_end_clean();
                 ob_start();
+                //TODO Getting response without controller executation result, layout has no view parameters. Instead of directly getting content, we must execute a ErrorController, thatly we can pass the view parameters to layout
                 $objErrorView = new View($this->request);
                 $response     = $objErrorView->getResponse('error/500', array('error' => $e));
                 $response->send();
