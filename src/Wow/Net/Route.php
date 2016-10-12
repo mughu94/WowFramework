@@ -123,8 +123,6 @@
                     }
                 }
 
-                $this->setFixedNames();
-
                 return TRUE;
             }
 
@@ -149,16 +147,22 @@
          * Fix for autoloaders case sensivity.
          */
         private function setFixedNames() {
-
-            $fixedPrefix     = (isset($this->defaults["prefix"]) && !empty($this->defaults["prefix"])) ? implode("\\", explode("/", $this->defaults["prefix"])) . '\\' : '';
-            $fixedClassName  = isset($this->params["controller"]) ? implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["controller"])))) : $this->defaults["controller"];
+            $fixedClassName = (isset($this->defaults["prefix"]) && !empty($this->defaults["prefix"])) ? $this->defaults["prefix"] . '/' : '';
+            if(isset($this->params["controller"])) {
+                $explodeFold = explode("/", $this->params["controller"]);
+                for($i = 0; $i < count($explodeFold); $i++) {
+                    $fixedClassName .= implode("", array_map("ucfirst", array_map("strtolower", explode("-", $explodeFold[$i]))));
+                    $fixedClassName .= $i == (count($explodeFold) - 1) ? '' : '/';
+                }
+            } else {
+                $fixedClassName .= $this->defaults["controller"];
+            }
             $fixedMethodName = isset($this->params["action"]) ? implode("", array_map("ucfirst", array_map("strtolower", explode("-", $this->params["action"])))) : $this->defaults["action"];
 
 
             $this->fixedNames = array(
                 "className"  => $fixedClassName,
-                "methodName" => $fixedMethodName,
-                "prefix"     => $fixedPrefix
+                "methodName" => $fixedMethodName
             );
             //Merge with defaults
             $this->params = array_merge($this->defaults, $this->params);
@@ -168,6 +172,10 @@
          * Get fixed names
          */
         public function getFixedNames() {
+            if(empty($this->fixedNames)) {
+                $this->setFixedNames();
+            }
+
             return $this->fixedNames;
         }
     }

@@ -4,6 +4,7 @@
 
     use Exception;
     use Wow;
+    use Wow\Core\Dispatcher;
     use Wow\Net\Request;
     use Wow\Net\Response;
     use Wow\Net\Route;
@@ -40,14 +41,6 @@
          * @var Response
          */
         protected $response;
-
-
-        /**
-         * HTML
-         *
-         * @var Html
-         */
-        protected $html;
 
 
         /**
@@ -128,7 +121,6 @@
         public function __construct(Request $request, Route $route = NULL) {
             $this->request  = $request;
             $this->response = new Response();
-            $this->html     = new Html($request, $this->response);
             $this->route    = $route;
             $this->setTheme(Wow::get('app/theme'));
             $this->setLayout(Wow::get('app/layout'));
@@ -559,6 +551,38 @@
                     $this->setTranslations($v, $language, is_null($path) ? $k : $path . "/" . $k);
                 }
             }
+        }
+
+        /**
+         * @param string $controller
+         * @param string $action
+         * @param array  $routeParams
+         */
+        function action($controller, $action = "Index", $routeParams = array()) {
+            $actionResponse = $this->actionResponse($controller, $action, $routeParams);
+            echo $actionResponse === FALSE ? '' : $actionResponse->getBody();
+        }
+
+        /**
+         * @param string $controller
+         * @param string $action
+         * @param array  $routeParams
+         *
+         * @return bool|Response
+         */
+        function actionResponse($controller, $action = "Index", $routeParams = array()) {
+            $route = new Route("*", array(
+                "controller" => "",
+                "action"     => ""
+            ), array("*"));
+
+            $route->params               = array_merge($route->params, $routeParams);
+            $route->params["controller"] = $controller;
+            $route->params["action"]     = $action;
+
+            $actionResponse = Dispatcher::dispatchRoute($route, $this->request);
+
+            return $actionResponse;
         }
     }
 

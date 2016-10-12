@@ -215,7 +215,7 @@
          *
          * @return bool|mixed
          */
-        public static function executeRoute(Route $route, Request $request) {
+        public static function dispatchRoute(Route $route, Request $request) {
             /**
              * @var Controller $ControllerClass
              */
@@ -227,8 +227,7 @@
 
             $fixedClassName  = $fixedNames["className"];
             $fixedMethodName = $fixedNames["methodName"];
-            $fixedPrefix     = $fixedNames["prefix"];
-            $psr4ClassName   = "App\\Controllers\\" . $fixedPrefix . $fixedClassName . "Controller";
+            $psr4ClassName   = "App\\Controllers\\" . str_replace("/", "\\", $fixedClassName) . "Controller";
 
             if(!class_exists($psr4ClassName)) {
                 return FALSE;
@@ -244,7 +243,6 @@
             $methodValues = $route->params;
             $methodParams = $objRefMethod->getParameters();
 
-            unset($methodValues["prefix"]);
             unset($methodValues["controller"]);
             unset($methodValues["action"]);
 
@@ -261,11 +259,9 @@
                 }
             }
 
-
             $route->params["controller"] = $fixedClassName;
             $route->params["action"]     = $fixedMethodName;
-
-            $ControllerClass = new $psr4ClassName($route, $request);
+            $ControllerClass             = new $psr4ClassName($route, $request);
 
             return $ControllerClass->init($fixedMethodName . "Action", $methodValues);
 

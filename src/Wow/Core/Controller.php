@@ -216,7 +216,23 @@
                 return $responseExecuted;
             }
 
-            return $this->view->getResponse('error/404', NULL, TRUE);
+            return $this->view->getResponse('error/404', NULL);
+        }
+
+
+        function actionResult($controller, $action = "Index", $routeParams = array()) {
+            $route = new Route("*", array(
+                "controller" => "",
+                "action"     => ""
+            ), array("*"));
+
+            $route->params               = array_merge($route->params, $routeParams);
+            $route->params["controller"] = $controller;
+            $route->params["action"]     = $action;
+
+            $actionResponse = Dispatcher::dispatchRoute($route, $this->request);
+
+            return $actionResponse === FALSE ? $this->notFound() : $actionResponse;
         }
 
         /**
@@ -243,7 +259,6 @@
 
             return $this->response;
         }
-
 
 
         /**

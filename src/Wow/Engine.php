@@ -336,7 +336,7 @@
             // Route the request
             while($route = $router->route($request)) {
 
-                $continue = $this->dispatcher->executeRoute($route, $request);
+                $continue = $this->dispatcher->dispatchRoute($route, $request);
 
                 if($continue !== FALSE) {
                     $this->response = $continue;
@@ -351,7 +351,7 @@
 
             if(!$dispatched) {
                 $objErrorView   = new View($this->request);
-                $this->response = $objErrorView->getResponse('error/404', NULL, TRUE);
+                $this->response = $objErrorView->getResponse('error/404', NULL);
             }
         }
 
@@ -375,7 +375,7 @@
                 ob_end_clean();
                 ob_start();
                 $objErrorView = new View($this->request);
-                $response     = $objErrorView->getResponse('error/500', array('error' => $e), TRUE);
+                $response     = $objErrorView->getResponse('error/500', array('error' => $e));
                 $response->send();
                 $output = ob_get_clean();
                 exit($output);
