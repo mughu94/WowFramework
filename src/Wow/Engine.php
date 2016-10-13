@@ -6,8 +6,8 @@
     use Wow\Core\Dispatcher;
     use Wow\Core\Loader;
     use Wow\Net\Request;
+    use Wow\Net\Route;
     use Wow\Net\Router;
-    use Wow\Template\View;
 
     /**
      * The Engine class contains the Core functionality of the framework.
@@ -350,8 +350,13 @@
             }
 
             if(!$dispatched) {
-                $objErrorView   = new View($this->request);
-                $this->response = $objErrorView->getResponse('error/404', NULL);
+                $route                       = new Route("*", array(), array("*"));
+                $route->params               = array_merge($route->params, array(
+                    "errorCode" => "404"
+                ));
+                $route->params["controller"] = "Base";
+                $route->params["action"]     = "Error";
+                $this->response              = Dispatcher::dispatchRoute($route, $this->request);
             }
         }
 
@@ -374,9 +379,14 @@
             try {
                 ob_end_clean();
                 ob_start();
-                //TODO Getting response without controller executation result, layout has no view parameters. Instead of directly getting content, we must execute a ErrorController, thatly we can pass the view parameters to layout
-                $objErrorView = new View($this->request);
-                $response     = $objErrorView->getResponse('error/500', array('error' => $e));
+                $route                       = new Route("*", array(), array("*"));
+                $route->params               = array_merge($route->params, array(
+                    "errorCode"      => "500",
+                    "errorException" => (object)$e
+                ));
+                $route->params["controller"] = "Base";
+                $route->params["action"]     = "Error";
+                $response                    = Dispatcher::dispatchRoute($route, $this->request);
                 $response->send();
                 $output = ob_get_clean();
                 exit($output);

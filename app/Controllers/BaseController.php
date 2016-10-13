@@ -31,9 +31,27 @@
          *
          * @param string $type
          */
-        function middleware($type){
-            switch($type){
+        function middleware($type) {
+            switch($type) {
 
+            }
+        }
+
+        /**
+         * System error page's container. PLS DO NOT REMOVE!!!
+         *
+         * @param string     $errorCode
+         * @param \Exception $errorException
+         *
+         * @return Response
+         */
+        function ErrorAction($errorCode, $errorException = NULL) {
+            switch($errorCode) {
+                case "500":
+                    return $this->view(array("error" => $errorException), "error/500");
+                    break;
+                default:
+                    return $this->view(NULL, "error/404");
             }
         }
 
