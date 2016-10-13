@@ -291,4 +291,22 @@
         }
 
 
+        /**
+         * System error page's action
+         *
+         * @param string     $errorCode
+         * @param \Exception $errorException
+         *
+         * @return Response
+         */
+        function WowFrameworkErrorAction($errorCode, $errorException = NULL) {
+            switch($errorCode) {
+                case "500":
+                    return $this->view(array("error" => $errorException), "error/500");
+                    break;
+                default:
+                    return $this->view(NULL, "error/404");
+            }
+        }
+
     }

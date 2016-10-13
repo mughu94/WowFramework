@@ -355,7 +355,7 @@
                     "errorCode" => "404"
                 ));
                 $route->params["controller"] = "Base";
-                $route->params["action"]     = "Error";
+                $route->params["action"]     = "WowFrameworkError";
                 $this->response              = Dispatcher::dispatchRoute($route, $this->request);
             }
         }
@@ -385,7 +385,7 @@
                     "errorException" => (object)$e
                 ));
                 $route->params["controller"] = "Base";
-                $route->params["action"]     = "Error";
+                $route->params["action"]     = "WowFrameworkError";
                 $response                    = Dispatcher::dispatchRoute($route, $this->request);
                 $response->send();
                 $output = ob_get_clean();
