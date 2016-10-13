@@ -350,13 +350,12 @@
             }
 
             if(!$dispatched) {
-                $route                       = new Route("*", array(), array("*"));
-                $route->params               = array_merge($route->params, array(
-                    "errorCode" => "404"
-                ));
-                $route->params["controller"] = "Base";
-                $route->params["action"]     = "WowFrameworkError";
-                $this->response              = Dispatcher::dispatchRoute($route, $this->request);
+                $route                      = new Route("*", array(
+                    "controller" => "Base",
+                    "action"     => "WowFrameworkError"
+                ), array("*"));
+                $route->params["errorCode"] = "500";
+                $this->response             = Dispatcher::dispatchRoute($route, $this->request);
             }
         }
 
@@ -379,14 +378,13 @@
             try {
                 ob_end_clean();
                 ob_start();
-                $route                       = new Route("*", array(), array("*"));
-                $route->params               = array_merge($route->params, array(
-                    "errorCode"      => "500",
-                    "errorException" => (object)$e
-                ));
-                $route->params["controller"] = "Base";
-                $route->params["action"]     = "WowFrameworkError";
-                $response                    = Dispatcher::dispatchRoute($route, $this->request);
+                $route                           = new Route("*", array(
+                    "controller" => "Base",
+                    "action"     => "WowFrameworkError"
+                ), array("*"));
+                $route->params["errorCode"]      = "500";
+                $route->params["errorException"] = (object)$e;
+                $response                        = Dispatcher::dispatchRoute($route, $this->request);
                 $response->send();
                 $output = ob_get_clean();
                 exit($output);

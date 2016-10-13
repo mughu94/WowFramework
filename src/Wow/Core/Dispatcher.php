@@ -228,18 +228,12 @@
             $fixedClassName  = $fixedNames["className"];
             $fixedMethodName = $fixedNames["methodName"];
             $psr4ClassName   = "App\\Controllers\\" . str_replace("/", "\\", $fixedClassName) . "Controller";
-
             if(!class_exists($psr4ClassName)) {
                 return FALSE;
             } elseif(!method_exists($psr4ClassName, $fixedMethodName . "Action") || !is_callable($psr4ClassName, $fixedMethodName . "Action")) {
                 return FALSE;
             }
-
             $objRefMethod = new ReflectionMethod($psr4ClassName, $fixedMethodName . "Action");
-            if($psr4ClassName !== $objRefMethod->class || $objRefMethod->name !== $fixedMethodName . "Action") {
-                return FALSE;
-            }
-
             $methodValues = $route->params;
             $methodParams = $objRefMethod->getParameters();
 
