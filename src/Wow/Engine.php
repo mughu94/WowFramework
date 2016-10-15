@@ -354,7 +354,7 @@
                     "controller" => "Base",
                     "action"     => "WowFrameworkError"
                 ), array("*"));
-                $route->params["errorCode"] = "500";
+                $route->params["errorCode"] = "404";
                 $this->response             = Dispatcher::dispatchRoute($route, $this->request);
             }
         }
