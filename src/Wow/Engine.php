@@ -48,7 +48,7 @@
          */
         public function __construct() {
             // SESSION
-            $WowSessionName = md5("WowFramework" . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http') . "_" . $_SERVER["HTTP_HOST"]);
+            $WowSessionName = md5("WowFramework" . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http') . "_" . $_SERVER["HTTP_HOST"]. "_". $_SERVER['HTTP_USER_AGENT']);
             session_name($WowSessionName);
             session_start();
 
@@ -69,10 +69,10 @@
 
             //For prevent Session Hijack
             $FingerPrint                       = $WowSessionName . $_SERVER['HTTP_USER_AGENT'];
-            $_SESSION['WowSessionFingerPrint'] = md5($FingerPrint . session_id());
-            if(md5($FingerPrint . session_id()) != $_SESSION['WowSessionFingerPrint']) {
+            if(isset($_SESSION['WowSessionFingerPrint']) && md5($FingerPrint . session_id()) != $_SESSION['WowSessionFingerPrint']) {
                 session_regenerate_id(TRUE);
             }
+            $_SESSION['WowSessionFingerPrint'] = md5($FingerPrint . session_id());
 
             $this->vars = array();
 
