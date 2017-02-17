@@ -1,4 +1,3 @@
-RewriteEngine On
 # Redirect Trailing Slashes...
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)/$ /$1 [L,R=301]
@@ -7,3 +6,29 @@ RewriteRule ^(.*)/$ /$1 [L,R=301]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Disable Directory Listing For Security
+Options -Indexes
+
+# Caching For Static Files To Make Bandwidth Lower
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType image/jpg "access 1 year"
+ExpiresByType image/jpeg "access 1 year"
+ExpiresByType image/gif "access 1 year"
+ExpiresByType image/png "access 1 year"
+ExpiresByType text/css "access 1 month"
+ExpiresByType text/html "access 1 month"
+ExpiresByType application/pdf "access 1 month"
+ExpiresByType text/x-javascript "access 1 month"
+ExpiresByType application/x-shockwave-flash "access 1 month"
+ExpiresByType image/x-icon "access 1 year"
+ExpiresDefault "access 1 month"
+</IfModule>
+
+# Report Encoding Options To Client
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|xml|gz)$">
+    Header append Vary: Accept-Encoding
+  </FilesMatch>
+</IfModule>
