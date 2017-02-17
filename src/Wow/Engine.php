@@ -48,7 +48,9 @@
          */
         public function __construct() {
             // SESSION
-            $WowSessionName = md5("WowFramework" . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http') . "_" . $_SERVER["HTTP_HOST"]. "_". $_SERVER['HTTP_USER_AGENT']);
+            $WowSessionName = md5("WowFramework" . "_" . $_SERVER["HTTP_HOST"]. "_". $_SERVER['HTTP_USER_AGENT']);
+            session_save_path('./app/Sessions');
+            ini_set('session.gc_probability', 1);
             session_name($WowSessionName);
             session_start();
 
