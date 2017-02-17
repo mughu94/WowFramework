@@ -246,9 +246,6 @@
                            ->header("Content-Type", $mimeType)
                            ->header("Content-Disposition", $force_download ? 'attachment; filename="' . $fileName . '"' : 'filename="' . $fileName . '"')
                            ->write($buffer);
-            if($force_download) {
-                $this->response->header("", "");
-            }
 
             return $this->response;
         }
