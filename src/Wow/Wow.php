@@ -13,12 +13,7 @@
  * @method  static bool has($key) Checks if a variable is set.
  * @method  static void clear($key = null) Clears a variable.
  * @method  static void start() Starts the framework.
- * @method  static void stop() Stops the framework and sends a response.
- * @method  static void halt($code = 200, $message = '') Stop the framework with an optional status code and message.
- * @method  static void redirect($url, $code = 303) Redirects to another URL.
  * @method  static void error($exception) Sends an HTTP 500 response.
- * @method  static void etag($id, $type = 'strong') Performs ETag HTTP caching.
- * @method  static void lastModified($time) Performs last modified HTTP caching.
  */
 class Wow {
     /**

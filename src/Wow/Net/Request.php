@@ -24,7 +24,6 @@ use Wow\Util\Collection;
  *   data - Post parameters
  *   cookies - Cookie parameters
  *   files - Uploaded files
- *   session - Session parameters
  *   secure - Connection is secure
  *   accept - HTTP accept parameters
  *   proxy_ip - Proxy IP address of the client
@@ -99,10 +98,6 @@ class Request {
      * @var \Wow\Util\Collection Uploaded files
      */
     public $files;
-    /**
-     * @var \Wow\Util\Collection Session contents
-     */
-    public $session;
 
     /**
      * @var bool Whether the connection is secure
@@ -142,7 +137,6 @@ class Request {
                 'data' => new Collection($_POST),
                 'cookies' => new Collection($_COOKIE),
                 'files' => new Collection($_FILES),
-                'session' => new Collection($_SESSION),
                 'secure' => self::getVar('HTTPS', 'off') != 'off',
                 'accept' => self::getVar('HTTP_ACCEPT'),
                 'proxy_ip' => self::getProxyIpAddress()
