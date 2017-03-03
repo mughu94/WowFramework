@@ -42,7 +42,7 @@
         /**
          * @var array $parameters
          */
-        private $parameters;
+        private $parameters = array();
 
 
         /**
@@ -63,8 +63,12 @@
          *    2. Creates the parameter array.
          */
         public function __construct($connectionName = "DefaultConnection") {
-            $this->Connect($connectionName);
-            $this->parameters = array();
+            // Get database properties from Config File
+            if(Wow::has("database/" . $connectionName)) {
+                $this->settings = Wow::get("database/" . $connectionName);
+            } else {
+                throw new Exception("Database properties (named: " . $connectionName . ") could not found in Config file!");
+            }
         }
 
         /**
@@ -75,14 +79,7 @@
          *    3. Tries to connect to the database.
          *    4. If connection failed, exception is displayed and a log file gets created.
          */
-        private function Connect($connectionName = "DefaultConnection") {
-            // Get database properties from Config File
-            if(Wow::has("database/" . $connectionName)) {
-                $this->settings = Wow::get("database/" . $connectionName);
-            } else {
-                throw new Exception("Database properties (named: " . $connectionName . ") could not found in Config file!");
-            }
-
+        private function Connect() {
             try {
                 switch($this->settings["driver"]) {
                     case "mysql":
@@ -150,6 +147,7 @@
              * http://www.php.net/manual/en/pdo.connections.php
              */
             $this->pdo = NULL;
+            $this->bConnected = FALSE;
         }
 
         /**
