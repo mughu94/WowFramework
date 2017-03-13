@@ -13,7 +13,7 @@
  * @method  static bool has($key) Checks if a variable is set.
  * @method  static void clear($key = null) Clears a variable.
  * @method  static void start() Starts the framework.
- * @method  static void error($exception) Sends an HTTP 500 response.
+ * @method  static void error(Exception $e) Sends an HTTP 500 response.
  */
 class Wow {
     /**

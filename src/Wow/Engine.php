@@ -89,7 +89,7 @@
         /*** Core Methods ***/
 
         /**
-         * Initializes the framework.
+         * Initializes the framework. If it is initiazlized before, then reinit with defaults.
          */
         public function init() {
             static $initialized = FALSE;
@@ -300,38 +300,48 @@
             $this->loader->addDirectory($dir);
         }
 
+        /**
+         * Start Session if not started
+         */
+        public function startSession(){
+            //Do not start if already started
+            if(session_status() == PHP_SESSION_NONE) {
+                $WowSessionName = md5("WowFramework" . "_" . preg_replace('/(?:www\.)?(.*)\/?$/i', '$1', $_SERVER["HTTP_HOST"]) . "_" . $_SERVER['HTTP_USER_AGENT']);
+                session_name($WowSessionName);
+                session_start();
+
+                // For Session ID refresh every 30 min
+                if(!isset($_SESSION["WowSessionCreated"])) {
+                    $_SESSION["WowSessionCreated"] = time();
+                } else if(time() - $_SESSION["WowSessionCreated"] > 1800) {
+                    session_regenerate_id(TRUE);
+                    $_SESSION["WowSessionCreated"] = time();
+                }
+
+                //For Session destroy after 30 min with no activity
+                if(isset($_SESSION["WowSessionLastActivity"]) && (time() - $_SESSION["WowSessionLastActivity"] > 1800)) {
+                    session_unset();
+                    session_destroy();
+                }
+                $_SESSION["WowSessionLastActivity"] = time();
+
+                //For prevent Session Hijack
+                $FingerPrint = $WowSessionName . $_SERVER['HTTP_USER_AGENT'];
+                if(isset($_SESSION['WowSessionFingerPrint']) && md5($FingerPrint . session_id()) != $_SESSION['WowSessionFingerPrint']) {
+                    session_regenerate_id(TRUE);
+                }
+                $_SESSION['WowSessionFingerPrint'] = md5($FingerPrint . session_id());
+            }
+        }
+
         /*** Extensible Methods ***/
 
         /**
          * Starts the framework.
          */
         public function _start() {
-            // SESSION
-            $WowSessionName = md5("WowFramework" . "_" . preg_replace('/(?:www\.)?(.*)\/?$/i', '$1', $_SERVER["HTTP_HOST"]) . "_" . $_SERVER['HTTP_USER_AGENT']);
-            session_name($WowSessionName);
-            session_start();
 
-            // For Session ID refresh every 30 min
-            if(!isset($_SESSION["WowSessionCreated"])) {
-                $_SESSION["WowSessionCreated"] = time();
-            } else if(time() - $_SESSION["WowSessionCreated"] > 1800) {
-                session_regenerate_id(TRUE);
-                $_SESSION["WowSessionCreated"] = time();
-            }
-
-            //For Session destroy after 30 min with no activity
-            if(isset($_SESSION["WowSessionLastActivity"]) && (time() - $_SESSION["WowSessionLastActivity"] > 1800)) {
-                session_unset();
-                session_destroy();
-            }
-            $_SESSION["WowSessionLastActivity"] = time();
-
-            //For prevent Session Hijack
-            $FingerPrint = $WowSessionName . $_SERVER['HTTP_USER_AGENT'];
-            if(isset($_SESSION['WowSessionFingerPrint']) && md5($FingerPrint . session_id()) != $_SESSION['WowSessionFingerPrint']) {
-                session_regenerate_id(TRUE);
-            }
-            $_SESSION['WowSessionFingerPrint'] = md5($FingerPrint . session_id());
+            $this->startSession();
 
             $dispatched = FALSE;
             $self       = $this;
