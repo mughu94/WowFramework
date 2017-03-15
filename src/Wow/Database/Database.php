@@ -146,7 +146,7 @@
              * Set the PDO object to null to close the connection
              * http://www.php.net/manual/en/pdo.connections.php
              */
-            $this->pdo = NULL;
+            $this->pdo        = NULL;
             $this->bConnected = FALSE;
         }
 
@@ -245,8 +245,7 @@
         }
 
         /**
-         *  If the SQL query  contains a SELECT or SHOW statement it returns an array containing all of the result set row
-         *    If the SQL statement is a DELETE, INSERT, or UPDATE statement it returns the number of affected rows
+         *  If query contains a resultset returns it, otherwise returns affected rowCount
          *
          * @param  string $query
          * @param  array  $params
@@ -259,20 +258,8 @@
 
             $this->Init($query, $params);
 
-            $rawStatement = explode(" ", preg_replace("/\s+|\t+|\n+/", " ", $query));
-
-            /**
-             * Which SQL statement is used
-             */
-            $statement = strtolower($rawStatement[0]);
-
-            if($statement === 'select' || $statement === 'show' || $statement === 'exec') {
-                return $this->sQuery->fetchAll($fetchmode);
-            } elseif($statement === 'insert' || $statement === 'update' || $statement === 'delete') {
-                return $this->sQuery->rowCount();
-            } else {
-                return NULL;
-            }
+            //If there is a resultset return the results, Otherwise return affected rowCount after query
+            return $this->sQuery->columnCount() > 0 ? $this->sQuery->fetchAll($fetchmode) : $this->sQuery->rowCount();
         }
 
         /**
@@ -342,6 +329,7 @@
             $this->Init($query, $params);
             $result = $this->sQuery->fetch($fetchmode);
             $this->sQuery->closeCursor(); // Frees up the connection to the server so that other SQL statements may be issued,
+
             return $result;
         }
 
@@ -357,6 +345,7 @@
             $this->Init($query, $params);
             $result = $this->sQuery->fetchColumn();
             $this->sQuery->closeCursor(); // Frees up the connection to the server so that other SQL statements may be issued
+
             return $result;
         }
     }
