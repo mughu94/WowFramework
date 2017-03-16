@@ -303,13 +303,19 @@
         /**
          * Start Session if not started
          */
-        public function startSession(){
+        public function startSession($security = FALSE) {
+
+            $WowSessionName = md5("WowFramework" . "_" . preg_replace('/(?:www\.)?(.*)\/?$/i', '$1', $_SERVER["HTTP_HOST"]) . "_" . $_SERVER['HTTP_USER_AGENT']);
+            if($WowSessionName != session_name()) {
+                session_name($WowSessionName);
+            }
+
             //Do not start if already started
             if(session_status() == PHP_SESSION_NONE) {
-                $WowSessionName = md5("WowFramework" . "_" . preg_replace('/(?:www\.)?(.*)\/?$/i', '$1', $_SERVER["HTTP_HOST"]) . "_" . $_SERVER['HTTP_USER_AGENT']);
-                session_name($WowSessionName);
                 session_start();
+            }
 
+            if($security) {
                 // For Session ID refresh every 30 min
                 if(!isset($_SESSION["WowSessionCreated"])) {
                     $_SESSION["WowSessionCreated"] = time();
@@ -332,6 +338,7 @@
                 }
                 $_SESSION['WowSessionFingerPrint'] = md5($FingerPrint . session_id());
             }
+
         }
 
         /*** Extensible Methods ***/
@@ -341,7 +348,7 @@
          */
         public function _start() {
 
-            $this->startSession();
+            $this->startSession(TRUE);
 
             $dispatched = FALSE;
             $self       = $this;
