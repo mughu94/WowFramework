@@ -104,14 +104,17 @@
          * @var string
          */
         protected $layout = NULL;
-
-
+        /**
+         * @var array $extendArr Stores extending list as viewname => nextView
+         */
+        private $extendArr = [];
         /**
          * Template file.
          *
          * @var string
          */
         private $template;
+
 
         /**
          * View constructor.
@@ -330,6 +333,16 @@
 
 
         /**
+         * Extend a view's content to another view.
+         *
+         * @param $viewname $nextView
+         */
+        public function extend($viewname) {
+            $this->extendArr[$this->template] = isset($this->extendArr[$this->template]) ? array_merge($this->extendArr[$this->template], [$viewname]) : [$viewname];
+        }
+
+
+        /**
          * Executes View and returns Response
          *
          * @param string $viewname Viewname
@@ -349,6 +362,7 @@
             return $this->response;
         }
 
+
         /**
          * Executes View and returns It's Content
          *
@@ -364,6 +378,7 @@
                 if(!empty($content)) {
                     $this->temporaryBody = $content;
                     $content             = $this->fetchView($this->layout, $model);
+                    $this->temporaryBody = NULL;
                 }
             }
 
@@ -418,9 +433,24 @@
          * @return string Output of Template
          */
         private function fetchView($viewname, $model = NULL) {
+            $templatePath   = $this->getViewPath($viewname);
+            $this->template = $templatePath;
+
             ob_start();
-            $this->executeView($viewname, $model);
+            $this->executeView($this->template, $model);
             $output = ob_get_clean();
+
+            //If this view wanted to extend another view lets do work
+            $extendArr = isset($this->extendArr[$templatePath]) ? $this->extendArr[$templatePath] : [];
+            if(!empty($extendArr)) {
+                do {
+                    $this->temporaryBody = $output;
+                    $eViewname           = $extendArr[0];
+                    $output              = $this->fetchView($eViewname, $model);
+                    unset($this->extendArr[$viewname][0]);
+                }
+                while(!empty($this->extendArr[$viewname]));
+            }
 
             return $output;
         }
@@ -428,19 +458,18 @@
         /**
          * Renders a Template.
          *
-         * @param string $viewname Viewname
-         * @param mixed  $model    Model
+         * @param string $templatePath Viewpath
+         * @param mixed  $model        Model
          *
          * @throws Exception If Template file not found
          */
-        private function executeView($viewname, $model = NULL) {
-            $this->template = $this->getViewPath($viewname);
+        private function executeView($templatePath, $model = NULL) {
 
-            if(!file_exists($this->template)) {
-                throw new Exception("Template file not found: {$this->template}.");
+            if(!file_exists($templatePath)) {
+                throw new Exception("Template file not found: {$templatePath}.");
             }
 
-            include $this->template;
+            include $templatePath;
         }
 
         /**
