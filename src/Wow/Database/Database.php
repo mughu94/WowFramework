@@ -306,7 +306,7 @@
             $this->Init($query, $params);
             $Columns = $this->sQuery->fetchAll(PDO::FETCH_NUM);
 
-            $column = NULL;
+            $column = array();
 
             foreach($Columns as $cells) {
                 $column[] = $cells[0];
