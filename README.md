@@ -1,6 +1,13 @@
 # WowFramework
 A lightweight, extendable, multilingual and powerful PHP MVC-L framework. Includes only general needs and optimized for speed.
 
+##System Requirements
+PHP 5.6+
+
+Wow Framework is compatible with PHP 7.x
+
+Tested on  both Windows and Linux based hosts.
+
 ##Routing
 The routing mechanism finds the Classname, Class Method and Method parameters from url.
 A url like /sales/latest-sales extends to

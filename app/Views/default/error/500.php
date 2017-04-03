@@ -15,7 +15,7 @@
         <a class="btn btn-xs btn-default" href="javascript:void(0);" onclick="document.getElementById('divErrorDetails').style.display='block';"><?php echo $this->translate("error/500/see_details"); ?></a>
     </p>
     <div style="display: none;" id="divErrorDetails">
-        <?php if($e instanceof Exception) { ?>
+        <?php if($e instanceof Throwable || $e instanceof Exception) { ?>
             <h3><?php echo $e->getMessage(); ?> (<?php echo $e->getCode(); ?>)</h3>
             <pre><?php echo $e->getTraceAsString(); ?></pre>
         <?php } else { ?>

@@ -4,6 +4,7 @@
 
     use ErrorException;
     use Exception;
+    use Throwable;
     use Wow\Core\Dispatcher;
     use Wow\Core\Loader;
     use Wow\Net\Request;
@@ -172,9 +173,9 @@
         /**
          * Custom exception handler. Logs exceptions.
          *
-         * @param Exception $e Thrown exception
+         * @param \Throwable $e Thrown exception
          */
-        public function handleException(Exception $e) {
+        public function handleException($e) {
             if($this->get('app/log_errors')) {
                 error_log($e->getMessage());
             }
@@ -412,9 +413,9 @@
         /**
          * Sends an HTTP 500 response for any errors.
          *
-         * @param Exception $e
+         * @param \Throwable $e
          */
-        public function _error(Exception $e) {
+        public function _error($e) {
             try {
                 ob_end_clean();
                 ob_start();
@@ -428,6 +429,10 @@
                 $response->send();
                 $output = ob_get_clean();
                 exit($output);
+            } catch(Throwable $ex) {
+                $msg = sprintf('<h1>500 Internal Server Error</h1>' . '<h3>%s (%s)</h3>' . '<pre>%s</pre>', $ex->getMessage(), $ex->getCode(), $ex->getTraceAsString());
+                ob_end_clean();
+                exit($msg);
             } catch(Exception $ex) {
                 $msg = sprintf('<h1>500 Internal Server Error</h1>' . '<h3>%s (%s)</h3>' . '<pre>%s</pre>', $ex->getMessage(), $ex->getCode(), $ex->getTraceAsString());
                 ob_end_clean();
