@@ -61,13 +61,43 @@ So the url /About extends to
 
 You can add a prefix folder to your routes, and group your controllers in folders.
 
-Routes are defined in /app/Config/Routes.php file!
+Routes are defined in /app/Config/routes.php file!
 
 We suggest you to use lowercase letters in yoru uri. This is the best choice in WowFramework.
 
-The route matching mechanism suports case-sensitive and case-insensitive matching. Default is case-insensitive. You can change it app/Config/Config.php file. 
+The route matching mechanism suports case-sensitive and case-insensitive matching. Default is case-insensitive. You can change it app/Config/config.php file. 
 
 The case-insensitive route matching means that: if you define a route like /upgrade(/@conroller(/@method)) does not match for uri /Upgrade/version/latest because of Upgrade not equals upgrade!
+
+Also you can you can use regex patterns. A sample for this (In this sample categoryid is optional):
+
+```
+        "routes"   => array(
+            "CategoryRoute" => array(
+                "/category/[\w-]+(/@categoryid)",
+                array(
+                    "prefix"     => "",
+                    "controller" => "Products",
+                    "action"     => "List"
+                )
+            )
+        )
+```
+
+Also you can you can use regex patterns for named params. In this way param must match with pattern. You should add :{ YOUR REGEX PATTERN }
+
+```
+        "routes"   => array(
+            "ProductDetailsRoute" => array(
+                "/@slug:{[\w-]+}-product@id:{[0-9]+}",
+                array(
+                    "prefix"     => "",
+                    "controller" => "Product",
+                    "action"     => "Detail"
+                )
+            )
+        )
+```
 
 ##Controllers
 Controllers are stored in app/Controllers folder under namespace App\Controllers

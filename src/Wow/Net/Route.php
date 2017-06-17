@@ -98,7 +98,7 @@
                                      '(/?|/.*?)'
                                  ), $this->pattern);
 
-            $regex = preg_replace_callback('#@([\w]+)(:([^/\(\)]*))?#', function($matches) use (&$ids) {
+            $regex = preg_replace_callback('#@([\w]+)(:\{[^/\(\)]*\})?#', function($matches) use (&$ids) {
                 $ids[$matches[1]] = NULL;
                 if(isset($matches[3])) {
                     return '(?P<' . $matches[1] . '>' . $matches[3] . ')';
