@@ -1,14 +1,14 @@
 # WowFramework
 A lightweight, extendable, multilingual and powerful PHP MVC-L framework. Includes only general needs and optimized for speed.
 
-##System Requirements
+## System Requirements
 PHP 5.6+
 
 Wow Framework is compatible with PHP 7.x
 
 Tested on  both Windows and Linux based hosts.
 
-##Routing
+## Routing
 The routing mechanism finds the Classname, Class Method and Method parameters from url.
 A url like /sales/latest-sales extends to
 * Controller : SalesController
@@ -99,7 +99,7 @@ Also you can you can use regex patterns for named params. In this way param must
         )
 ```
 
-##Controllers
+## Controllers
 Controllers are stored in app/Controllers folder under namespace App\Controllers
 
 ### Controller Classes
@@ -232,7 +232,7 @@ Example:
 
     $this->view->set("title",$product["title"]);    
 
-##Views
+## Views
 The view files are stored in app/Views folder. The view files are pure php files. Wow Framework's View Class has a name = value array which is used to pass data from Controller Method to View file. The get(name), set(name,value), has(name), clear(name) methods for name value pairs.
 
 For example in a view file you can use:
